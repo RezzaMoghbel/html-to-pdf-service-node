@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found | PDF Service</title>
+    <link rel="stylesheet" href="css/health-status.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+      }
+
+      .container {
+        text-align: center;
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 90%;
+      }
+
+      .error-code {
+        font-size: 6rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 1rem;
+        line-height: 1;
+      }
+
+      .error-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 1rem;
+      }
+
+      .error-message {
+        font-size: 1.1rem;
+        color: #718096;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+      }
+
+      .actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-secondary {
+        background: #f7fafc;
+        color: #4a5568;
+        border: 2px solid #e2e8f0;
+      }
+
+      .btn-secondary:hover {
+        background: #edf2f7;
+        border-color: #cbd5e0;
+      }
+
+      .help-text {
+        margin-top: 2rem;
+        padding: 1rem;
+        background: #f7fafc;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: #4a5568;
+      }
+
+      .help-text a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .help-text a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 2rem 1.5rem;
+        }
+
+        .error-code {
+          font-size: 4rem;
+        }
+
+        .error-title {
+          font-size: 1.5rem;
+        }
+
+        .actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: 200px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="error-code">404</div>
+      <h1 class="error-title">Page Not Found</h1>
+      <p class="error-message">
+        Sorry, the page you're looking for doesn't exist or has been moved.
+      </p>
+
+      <div class="actions">
+        <a href="/" class="btn btn-primary">Go Home</a>
+        <a href="javascript:history.back()" class="btn btn-secondary"
+          >Go Back</a
+        >
+      </div>
+
+      <div class="help-text">
+        <p>
+          <strong>Looking for something specific?</strong><br />
+          Try visiting our
+          <a href="pages/api-docs.html">API Documentation</a> or
+          <a href="/swagger">Swagger UI</a> for API reference.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Auto-redirect to home after 10 seconds if user doesn't interact
+      let redirectTimer;
+
+      function startRedirectTimer() {
+        redirectTimer = setTimeout(() => {
+          window.location.href = "/";
+        }, 10000);
+      }
+
+      function clearRedirectTimer() {
+        if (redirectTimer) {
+          clearTimeout(redirectTimer);
+        }
+      }
+
+      // Start timer when page loads
+      startRedirectTimer();
+
+      // Clear timer on any user interaction
+      document.addEventListener("click", clearRedirectTimer);
+      document.addEventListener("keydown", clearRedirectTimer);
+      document.addEventListener("scroll", clearRedirectTimer);
+
+      // Show countdown
+      let countdown = 10;
+      const countdownElement = document.createElement("div");
+      countdownElement.style.cssText =
+        "margin-top: 1rem; font-size: 0.9rem; color: #718096;";
+      countdownElement.innerHTML = `Auto-redirecting to home in <span id="countdown">${countdown}</span> seconds...`;
+      document.querySelector(".container").appendChild(countdownElement);
+
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        document.getElementById("countdown").textContent = countdown;
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+    </script>
+
+    <!-- Health Status Widget -->
+    <script src="js/health-status.js"></script>
+  </body>
+</html>

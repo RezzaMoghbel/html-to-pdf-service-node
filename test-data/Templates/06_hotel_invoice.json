@@ -1,0 +1,85 @@
+{
+  "pdfDocumentBundle": {
+    "head": {
+      "title": "Hotel Invoice",
+      "meta": [
+        {
+          "charset": "utf-8"
+        },
+        {
+          "name": "viewport",
+          "content": "width=device-width,initial-scale=1"
+        }
+      ],
+      "styles": [
+        {
+          "type": "inline",
+          "content": "\n<style>\n:root{\n  --header-h:15mm; --footer-h:10mm;\n  --page-width:210mm; --page-height:297mm;\n  --muted:#6b7280; --accent:#8d6e63;\n}\n*{ box-sizing:border-box; }\nhtml, body{ margin:0; padding:0; background:#fff; }\nbody{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color:#111; }\n.page{ width:var(--page-width); height:var(--page-height); position:relative; background:#fff; page-break-after:always; }\n.page:last-child{ page-break-after:auto; }\n.hdr{ height:var(--header-h); padding:6px 10mm; display:flex; align-items:center; gap:10px; border-bottom:1px solid #e5e7eb; background:linear-gradient(90deg,#f5f7ff,#fff); }\n.hdr svg{ height:calc(var(--header-h) - 8px); width:auto; }\n.ftr{ height:var(--footer-h); border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between; padding:0 10mm; color:var(--muted); font-size:11px; }\n.body{ position:absolute; top:var(--header-h); bottom:var(--footer-h); left:0; right:0; padding:10mm; overflow:hidden; }\n.flow > * { break-inside: avoid; }\nh1{ font-size:22px; margin:0 0 6px 0; letter-spacing:.02em; }\nh2{ font-size:18px; margin:10px 0 6px 0; }\np{ line-height:1.45; margin:0 0 6px 0; }\n.table{ width:100%; border-collapse:collapse; font-size:13px; margin:6px 0; }\n.table th, .table td{ border:1px solid #e5e7eb; padding:6px 8px; vertical-align:top; }\n.table thead th{ background:#f7f9ff; }\n.kv th{ background:#f7f9ff; width:38%; text-align:left; }\n.kv td{ width:62%; }\n.badge{ display:inline-block; background:var(--accent); color:#fff; padding:.2rem .5rem; border-radius:999px; font-size:12px; }\n.note{ color:#6b7280; font-size:12px; }\n.forcePageEnd{ page-break-after:always; break-after:page; height:1px; background:transparent; }\n.money{font-variant-numeric:tabular-nums; text-align:right;} .card{border:1px solid #ddd; padding:8px; border-radius:8px; background:#fffdf8;}\n@page{ size:210mm 297mm; margin:0; }\n</style>\n"
+        }
+      ]
+    },
+    "layout": {
+      "page": {
+        "size": "A4",
+        "margin": {
+          "top": "0mm",
+          "right": "0mm",
+          "bottom": "0mm",
+          "left": "0mm"
+        },
+        "headerHeight": "15mm",
+        "footerHeight": "10mm"
+      },
+      "safeFrame": {
+        "enabled": false,
+        "stroke": "0px",
+        "color": "#000",
+        "topOffset": "0px",
+        "bottomOffset": "0px",
+        "leftOffset": "0px",
+        "rightOffset": "0px"
+      },
+      "useBuiltInPaginator": true
+    },
+    "security": {
+      "sanitizeHtml": true,
+      "allowExternalResources": true
+    },
+    "body": {
+      "document": {
+        "class": "document"
+      },
+      "pages": [
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Hotel Invoice"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Hotel Invoice</h1>\n  <div class='card'><table class='table kv'>\n    <tr><th>Invoice #</th><td>INV-29831</td></tr>\n    <tr><th>Guest</th><td>Oliver Hart</td></tr>\n    <tr><th>Stay</th><td>12–15 Sep 2025</td></tr>\n  </table></div>\n  <h2>Charges</h2>\n  <table class='table'><tbody><tr><td>Night 1 (Room 504)</td><td class='money'>£121.00</td></tr><tr><td>Night 2 (Room 504)</td><td class='money'>£123.00</td></tr><tr><td>Night 3 (Room 504)</td><td class='money'>£125.00</td></tr><tr><td>City Tax</td><td class='money'>£6.50</td></tr></tbody>\n  <tfoot><tr><td>Total</td><td class='money'>£369.50</td></tr></tfoot></table>\n</div></main>"
+        }
+      ]
+    },
+    "header": "\n<header>\n  <div class=\"hdr\">\n    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60'>\n      <rect x='0' y='0' width='240' height='60' rx='8' ry='8' fill='#8d6e63' opacity='.08'/>\n      <circle cx='34' cy='30' r='16' fill='#8d6e63'/>\n      <text x='60' y='36' font-family='Arial, Helvetica, sans-serif' font-size='24' fill='#8d6e63'>HARBORVIEW</text>\n    </svg>\n    <div style=\"margin-left:auto\" class=\"badge\">A4</div>\n  </div>\n</header>\n",
+    "footer": "\n<footer>\n  <div class=\"ftr\">\n    <div>Harborview Hospitality</div>\n    <div>Page <span class=\"current\"></span> / <span class=\"total\"></span></div>\n  </div>\n</footer>\n",
+    "scripts": [
+      {
+        "type": "inline",
+        "content": "\n<script>\nwindow.addEventListener('load', () => {\n  const BUFFER = 2;\n  function ensureFlow(page){\n    const body = page.querySelector('.body');\n    let flow = body.querySelector(':scope > .flow');\n    if(!flow){\n      flow = document.createElement('div');\n      flow.className = 'flow';\n      const kids = Array.from(body.childNodes);\n      body.innerHTML='';\n      kids.forEach(k => flow.appendChild(k));\n      body.appendChild(flow);\n    }\n    return { body, flow };\n  }\n  function makePageAfter(prevPage){\n    const clone = prevPage.cloneNode(true);\n    const cBody = clone.querySelector('.body');\n    cBody.innerHTML='';\n    const cFlow = document.createElement('div');\n    cFlow.className = 'flow';\n    cBody.appendChild(cFlow);\n    prevPage.parentNode.insertBefore(clone, prevPage.nextSibling);\n    return { page: clone, body: cBody, flow: cFlow };\n  }\n  function paginate(page){\n    const { body, flow } = ensureFlow(page);\n    const items = Array.from(flow.children);\n    flow.innerHTML='';\n    let cur = { page, body, flow };\n    for(const el of items){\n      if(el.classList && el.classList.contains('forcePageEnd')){\n        if(cur.flow.childElementCount > 0){ cur = makePageAfter(cur.page); }\n        continue;\n      }\n      cur.flow.appendChild(el);\n      const elBottom = el.getBoundingClientRect().bottom;\n      const bodyBottom = cur.body.getBoundingClientRect().bottom;\n      if(elBottom > bodyBottom - BUFFER){\n        cur.flow.removeChild(el);\n        const next = makePageAfter(cur.page);\n        next.flow.appendChild(el);\n        cur = next;\n      }\n    }\n  }\n  const originals = Array.from(document.querySelectorAll('.page'));\n  originals.forEach(pg => paginate(pg));\n  const pages = Array.from(document.querySelectorAll('.page'));\n  const total = pages.length;\n  pages.forEach((pg, i) => {\n    pg.querySelectorAll('.current').forEach(el => el.textContent = String(i+1));\n    pg.querySelectorAll('.total').forEach(el => el.textContent = String(total));\n  });\n});\n</script>\n"
+      }
+    ]
+  },
+  "pdfOptions": {
+    "format": "A4",
+    "printBackground": true,
+    "margin": {
+      "top": "0",
+      "right": "0",
+      "bottom": "0",
+      "left": "0"
+    }
+  }
+}

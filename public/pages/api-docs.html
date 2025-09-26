@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Service API Documentation</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/health-status.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: #f8f9fa;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .server-url {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        font-family: "Courier New", monospace;
+        font-size: 1.1rem;
+      }
+
+      /* Navigation */
+      .nav {
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .nav-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #667eea;
+      }
+
+      /* Main Content */
+      .main {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar h3 {
+        margin-bottom: 1rem;
+        color: #333;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 0.5rem;
+      }
+
+      .sidebar ul {
+        list-style: none;
+      }
+
+      .sidebar li {
+        margin-bottom: 0.5rem;
+      }
+
+      .sidebar a {
+        text-decoration: none;
+        color: #666;
+        display: block;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: all 0.3s;
+      }
+
+      .sidebar a:hover {
+        background: #f0f0f0;
+        color: #667eea;
+      }
+
+      /* Content */
+      .content {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .endpoint {
+        margin-bottom: 3rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .endpoint-header {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .method {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.8rem;
+        margin-right: 1rem;
+      }
+
+      .method.post {
+        background: #28a745;
+        color: white;
+      }
+      .method.get {
+        background: #007bff;
+        color: white;
+      }
+
+      .endpoint-path {
+        font-family: "Courier New", monospace;
+        font-size: 1.1rem;
+        color: #333;
+      }
+
+      .endpoint-description {
+        margin-top: 0.5rem;
+        color: #666;
+      }
+
+      .endpoint-content {
+        padding: 1.5rem;
+      }
+
+      .section {
+        margin-bottom: 2rem;
+      }
+
+      .section h4 {
+        margin-bottom: 1rem;
+        color: #333;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+      }
+
+      /* Test Environment */
+      .test-environment {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .test-form {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        font-family: "Courier New", monospace;
+      }
+
+      .form-section {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .form-section h5 {
+        margin: 0 0 15px 0;
+        color: #495057;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .form-group input[type="checkbox"] {
+        margin-right: 8px;
+        transform: scale(1.1);
+      }
+
+      .form-group label:has(input[type="checkbox"]) {
+        display: flex;
+        align-items: center;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      .test-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #5a6fd8;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .response {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #2d3748;
+        color: #e2e8f0;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .response-pretty {
+        background: #1a202c;
+        border: 1px solid #4a5568;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      .response-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #4a5568;
+      }
+
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 1rem;
+      }
+
+      .status-200 {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-400 {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .status-500 {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .response-title {
+        font-weight: 600;
+        color: #e2e8f0;
+        margin: 0;
+      }
+
+      .response-content {
+        background: #2d3748;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-top: 1rem;
+        font-family: "Courier New", monospace;
+        font-size: 0.85rem;
+        overflow-x: auto;
+      }
+
+      .json-key {
+        color: #81c784;
+      }
+
+      .json-string {
+        color: #ffb74d;
+      }
+
+      .json-number {
+        color: #64b5f6;
+      }
+
+      .json-boolean {
+        color: #ba68c8;
+      }
+
+      .json-null {
+        color: #f06292;
+      }
+
+      .response.success {
+        border-left: 4px solid #28a745;
+      }
+
+      .response.error {
+        border-left: 4px solid #dc3545;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .main {
+          grid-template-columns: 1fr;
+        }
+
+        .nav-container {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+
+      /* Loading spinner */
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <h1><i class="fas fa-file-pdf"></i> PDF Service API</h1>
+        <p>
+          Generate and download PDFs from HTML content with our powerful REST
+          API
+        </p>
+        <div class="server-url">
+          <strong>Server URL:</strong>
+          <span id="serverUrl">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="container">
+        <div class="nav-container">
+          <h3>API Documentation</h3>
+          <ul class="nav-links">
+            <li><a href="api-reference.html">API Reference</a></li>
+            <li><a href="/swagger" target="_blank">Swagger UI</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="main">
+        <div class="sidebar">
+          <h3>API Endpoints</h3>
+          <ul>
+            <li><a href="#health">Health Check</a></li>
+            <li><a href="#bundle-html2pdf">Bundle HTML to PDF</a></li>
+          </ul>
+        </div>
+
+        <div class="content">
+          <!-- Overview Section -->
+          <section id="overview" class="section">
+            <h2>Overview</h2>
+            <p>
+              Our PDF Service API provides powerful endpoints for converting
+              HTML content to PDF documents. The API supports various input
+              formats and customization options to meet your specific needs.
+            </p>
+
+            <h3>Features</h3>
+            <ul>
+              <li>Convert HTML to PDF with custom styling</li>
+              <li>Support for complex document bundles</li>
+              <li>Customizable PDF options (format, margins, orientation)</li>
+              <li>Header and footer support</li>
+              <li>Multiple output formats (download, byte array)</li>
+              <li>Comprehensive error handling</li>
+            </ul>
+
+            <h3>Authentication</h3>
+            <p>
+              Currently, no authentication is required for testing. In
+              production, API keys or OAuth tokens may be implemented.
+            </p>
+          </section>
+
+          <!-- Health Check Endpoint -->
+          <div id="health" class="endpoint">
+            <div class="endpoint-header">
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/health</span>
+              <div class="endpoint-description">
+                Check the health status of the PDF service
+              </div>
+            </div>
+            <div class="endpoint-content">
+              <div class="section">
+                <h4>Description</h4>
+                <p>
+                  Returns the current health status of the PDF service,
+                  including uptime and system information.
+                </p>
+              </div>
+
+              <div class="test-environment">
+                <h4>Test This Endpoint</h4>
+                <button class="btn btn-primary" data-test-endpoint="health">
+                  Test Health Check
+                </button>
+                <div
+                  id="health-response"
+                  class="response"
+                  style="display: none"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bundle HTML to PDF Endpoint -->
+          <div id="bundle-html2pdf" class="endpoint">
+            <div class="endpoint-header">
+              <span class="method post">POST</span>
+              <span class="endpoint-path">/api/v1/bundle/bundleHtml2PDF</span>
+              <div class="endpoint-description">
+                Convert HTML content or document bundles to PDF
+              </div>
+            </div>
+            <div class="endpoint-content">
+              <div class="section">
+                <h4>Description</h4>
+                <p>
+                  This is the most powerful endpoint for PDF generation. It
+                  supports both simple HTML content and complex document bundles
+                  with headers, footers, and custom styling.
+                </p>
+              </div>
+
+              <div class="section">
+                <h4>Request Body Parameters</h4>
+                <ul>
+                  <li>
+                    <strong>html</strong> (string, optional): Direct HTML
+                    content to convert
+                  </li>
+                  <li>
+                    <strong>htmlContent</strong> (string, optional): Alternative
+                    field for HTML content
+                  </li>
+                  <li>
+                    <strong>pdfDocumentBundle</strong> (object, optional):
+                    Complex document structure with head, body, header, footer
+                  </li>
+                  <li>
+                    <strong>pdfOptions</strong> (object, optional): PDF
+                    generation options
+                  </li>
+                  <li>
+                    <strong>emailTo</strong> (string, optional): Email address
+                    for notifications
+                  </li>
+                </ul>
+
+                <h5>PDF Options</h5>
+                <ul>
+                  <li>
+                    <strong>format</strong>: "A4", "A3", "Letter", "Legal"
+                    (default: "A4")
+                  </li>
+                  <li>
+                    <strong>landscape</strong>: true/false (default: false)
+                  </li>
+                  <li>
+                    <strong>margin</strong>: Object with top, right, bottom,
+                    left properties
+                  </li>
+                  <li>
+                    <strong>scale</strong>: Number between 0.1 and 2 (default:
+                    1)
+                  </li>
+                  <li>
+                    <strong>printBackground</strong>: true/false (default: true)
+                  </li>
+                </ul>
+              </div>
+
+              <div class="test-environment">
+                <h4>Test This Endpoint</h4>
+                <div class="test-form">
+                  <p>
+                    Click the button below to access the interactive API testing
+                    interface.
+                  </p>
+                  <div class="test-buttons">
+                    <button
+                      class="btn btn-primary"
+                      onclick="window.location.href='bundle-html2pdf-test-ui.html'"
+                    >
+                      Open API Test Interface
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Global error handler for extension conflicts
+      window.addEventListener("error", function (event) {
+        if (
+          event.error &&
+          event.error.message.includes(
+            "listener indicated an asynchronous response"
+          )
+        ) {
+          console.warn(
+            "Browser extension conflict detected. This is not an error with the API documentation."
+          );
+          // Don't show this error to the user as it's not our fault
+          event.preventDefault();
+        }
+      });
+
+      // Update server URL based on current location
+      document.getElementById("serverUrl").textContent = window.location.origin;
+
+      // Update all hardcoded URLs in code examples
+      function updateCodeExampleUrls() {
+        const baseUrl = window.location.origin;
+
+        // Update all code content that contains hardcoded URLs
+        const codeElements = document.querySelectorAll(".code-content");
+        codeElements.forEach((element) => {
+          let content = element.textContent;
+
+          // Replace hardcoded localhost URLs with dynamic ones
+          content = content.replace(/http:\/\/localhost:\d+/g, baseUrl);
+          content = content.replace(/https:\/\/localhost:\d+/g, baseUrl);
+          content = content.replace(/http:\/\/localhost/g, baseUrl);
+          content = content.replace(/https:\/\/localhost/g, baseUrl);
+
+          // Update the content
+          element.textContent = content;
+        });
+      }
+
+      // Call the function to update URLs
+      updateCodeExampleUrls();
+
+      // Format JSON with syntax highlighting
+      function formatJSON(jsonString) {
+        try {
+          const obj = JSON.parse(jsonString);
+          return JSON.stringify(obj, null, 2);
+        } catch (e) {
+          return jsonString;
+        }
+      }
+
+      // Apply syntax highlighting to JSON
+      function highlightJSON(jsonString) {
+        return jsonString
+          .replace(/(".*?")\s*:/g, '<span class="json-key">$1</span>:')
+          .replace(/: ("[^"]*")/g, ': <span class="json-string">$1</span>')
+          .replace(/: (\d+\.?\d*)/g, ': <span class="json-number">$1</span>')
+          .replace(/: (true|false)/g, ': <span class="json-boolean">$1</span>')
+          .replace(/: null/g, ': <span class="json-null">null</span>');
+      }
+
+      // Display pretty response
+      function displayPrettyResponse(
+        containerId,
+        status,
+        data,
+        title = "Response"
+      ) {
+        const container = document.getElementById(containerId);
+        container.style.display = "block";
+
+        const statusClass =
+          status >= 200 && status < 300
+            ? "status-200"
+            : status >= 400 && status < 500
+            ? "status-400"
+            : "status-500";
+
+        let content = data;
+        let isJSON = false;
+
+        try {
+          const parsed = JSON.parse(data);
+          content = formatJSON(data);
+          isJSON = true;
+        } catch (e) {
+          // Not JSON, keep as is
+        }
+
+        container.innerHTML = `
+           <div class="response-pretty">
+             <div class="response-header">
+               <span class="status-badge ${statusClass}">${status}</span>
+               <h4 class="response-title">${title}</h4>
+             </div>
+             <div class="response-content">
+               ${isJSON ? highlightJSON(content) : content}
+             </div>
+           </div>
+         `;
+      }
+
+      // Event listeners for buttons
+      document.addEventListener("DOMContentLoaded", function () {
+        // Copy buttons
+        document
+          .querySelectorAll('[data-copy-target="code"]')
+          .forEach((button) => {
+            button.addEventListener("click", function () {
+              copyCode(this);
+            });
+          });
+
+        // Test endpoint buttons
+        document.querySelectorAll("[data-test-endpoint]").forEach((button) => {
+          button.addEventListener("click", function () {
+            const endpoint = this.getAttribute("data-test-endpoint");
+            if (endpoint === "health") {
+              testEndpoint("GET", "/health", null);
+            } else if (endpoint === "bundle") {
+              testBundleHtml2PDF();
+            } else if (endpoint === "bundle-advanced") {
+              testBundleHtml2PDF();
+            }
+          });
+        });
+
+        // Clear response buttons
+        document
+          .querySelectorAll('[data-clear-response="true"]')
+          .forEach((button) => {
+            button.addEventListener("click", function () {
+              clearResponse();
+            });
+          });
+      });
+
+      // Test health endpoint
+      async function testEndpoint(method, path, body) {
+        const responseDiv = document.getElementById("health-response");
+        responseDiv.style.display = "block";
+        responseDiv.innerHTML =
+          '<div class="response-pretty"><div class="response-header"><span class="status-badge" style="background: #6c757d; color: white;">Testing...</span><h4 class="response-title">Health Check</h4></div></div>';
+
+        try {
+          const response = await fetch(path, {
+            method: method,
+            headers: body ? { "Content-Type": "application/json" } : {},
+            body: body ? JSON.stringify(body) : null,
+          });
+
+          const data = await response.text();
+          displayPrettyResponse(
+            "health-response",
+            response.status,
+            data,
+            "Health Check Response"
+          );
+        } catch (error) {
+          displayPrettyResponse(
+            "health-response",
+            0,
+            `Network Error: ${error.message}`,
+            "Error"
+          );
+        }
+      }
+
+      // Test bundle HTML to PDF endpoint
+      async function testBundleHtml2PDF() {
+        const loading = document.getElementById("loading");
+        const responseDiv = document.getElementById("bundle-response");
+
+        loading.style.display = "block";
+        responseDiv.style.display = "none";
+
+        const requestData = {
+          html: document.getElementById("test-html").value,
+          pdfOptions: {
+            format: document.getElementById("test-format").value,
+            landscape:
+              document.getElementById("test-landscape").value === "true",
+          },
+        };
+
+        const email = document.getElementById("test-email").value;
+        if (email) {
+          requestData.emailTo = email;
+        }
+
+        try {
+          const response = await fetch("/api/v1/bundle/bundleHtml2PDF", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          });
+
+          loading.style.display = "none";
+          responseDiv.style.display = "block";
+
+          if (response.ok) {
+            // Handle PDF response
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "test-document.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            const successData = JSON.stringify(
+              {
+                message: "PDF generated successfully!",
+                status: response.status,
+                contentType: response.headers.get("content-type"),
+                size: `${blob.size} bytes`,
+                note: "PDF has been downloaded automatically",
+              },
+              null,
+              2
+            );
+
+            displayPrettyResponse(
+              "bundle-response",
+              response.status,
+              successData,
+              "PDF Generation Success"
+            );
+          } else {
+            const errorText = await response.text();
+            displayPrettyResponse(
+              "bundle-response",
+              response.status,
+              errorText,
+              "PDF Generation Error"
+            );
+          }
+        } catch (error) {
+          loading.style.display = "none";
+          responseDiv.style.display = "block";
+
+          let errorMessage;
+          if (
+            error.message.includes(
+              "listener indicated an asynchronous response"
+            )
+          ) {
+            errorMessage = JSON.stringify(
+              {
+                error: "Browser Extension Conflict",
+                message:
+                  "Please try in Incognito mode or disable browser extensions",
+                originalError: error.message,
+              },
+              null,
+              2
+            );
+          } else {
+            errorMessage = JSON.stringify(
+              {
+                error: "Network Error",
+                message: error.message,
+              },
+              null,
+              2
+            );
+          }
+
+          displayPrettyResponse("bundle-response", 0, errorMessage, "Error");
+        }
+      }
+
+      // Test advanced bundle HTML to PDF endpoint
+      async function testBundleHtml2PDF() {
+        const loading = document.getElementById("loading-advanced");
+        const responseDiv = document.getElementById("bundle-advanced-response");
+
+        loading.style.display = "block";
+        responseDiv.style.display = "none";
+
+        // Get all form values
+        const title =
+          document.getElementById("test-advanced-title").value || "Document";
+        const author =
+          document.getElementById("test-advanced-author").value ||
+          "PDF Service API";
+        const filename =
+          document.getElementById("test-advanced-filename").value ||
+          "advanced-test";
+        const subject =
+          document.getElementById("test-advanced-subject").value ||
+          "PDF Document";
+        const format = document.getElementById("test-advanced-format").value;
+        const landscape =
+          document.getElementById("test-advanced-orientation").value === "true";
+        const marginTop = document.getElementById(
+          "test-advanced-margin-top"
+        ).value;
+        const marginSides = document.getElementById(
+          "test-advanced-margin-sides"
+        ).value;
+        const pageCount = parseInt(
+          document.getElementById("test-advanced-page-count").value
+        );
+        const contentType = document.getElementById(
+          "test-advanced-content-type"
+        ).value;
+        const theme = document.getElementById("test-advanced-theme").value;
+        const font = document.getElementById("test-advanced-font").value;
+        const gradients = document.getElementById(
+          "test-advanced-gradients"
+        ).checked;
+        const shadows = document.getElementById(
+          "test-advanced-shadows"
+        ).checked;
+        const headers = document.getElementById(
+          "test-advanced-headers"
+        ).checked;
+        const footers = document.getElementById(
+          "test-advanced-footers"
+        ).checked;
+        const javascript = document.getElementById(
+          "test-advanced-javascript"
+        ).checked;
+        const pageNumbers = document.getElementById(
+          "test-advanced-page-numbers"
+        ).checked;
+        const timestamps = document.getElementById(
+          "test-advanced-timestamps"
+        ).checked;
+
+        // Generate theme-based CSS
+        const themeColors = {
+          blue: { primary: "#3498db", secondary: "#2980b9", accent: "#ecf0f1" },
+          green: {
+            primary: "#27ae60",
+            secondary: "#229954",
+            accent: "#d5f4e6",
+          },
+          purple: {
+            primary: "#9b59b6",
+            secondary: "#8e44ad",
+            accent: "#f4ecf7",
+          },
+          red: { primary: "#e74c3c", secondary: "#c0392b", accent: "#fadbd8" },
+          minimal: {
+            primary: "#6c757d",
+            secondary: "#495057",
+            accent: "#f8f9fa",
+          },
+        };
+
+        const fonts = {
+          segoe: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+          arial: "Arial, sans-serif",
+          times: "'Times New Roman', serif",
+          helvetica: "Helvetica, Arial, sans-serif",
+        };
+
+        const colors = themeColors[theme];
+        const fontFamily = fonts[font];
+
+        // Generate content based on content type and page count
+        const contentTemplates = {
+          "business-report": {
+            pages: [
+              {
+                title: "Executive Summary",
+                content:
+                  "Comprehensive overview of business performance and key metrics.",
+              },
+              {
+                title: "Financial Analysis",
+                content:
+                  "Detailed financial data, revenue analysis, and growth projections.",
+              },
+              {
+                title: "Market Analysis",
+                content:
+                  "Market trends, competitive landscape, and opportunities.",
+              },
+              {
+                title: "Strategic Recommendations",
+                content:
+                  "Actionable recommendations for future growth and development.",
+              },
+              {
+                title: "Conclusion",
+                content:
+                  "Summary of findings and next steps for implementation.",
+              },
+            ],
+          },
+          "product-catalog": {
+            pages: [
+              {
+                title: "Product Catalog",
+                content:
+                  "Discover our latest products with competitive pricing and features.",
+              },
+              {
+                title: "Featured Products",
+                content:
+                  "Our most popular and recommended products for this season.",
+              },
+              {
+                title: "New Arrivals",
+                content:
+                  "Fresh products just added to our catalog with special offers.",
+              },
+              {
+                title: "Accessories",
+                content:
+                  "Complementary accessories and add-ons for your products.",
+              },
+              {
+                title: "Contact Information",
+                content:
+                  "Get in touch with our sales team for personalized assistance.",
+              },
+            ],
+          },
+          invoice: {
+            pages: [
+              {
+                title: "Invoice Details",
+                content: "Complete billing information and payment terms.",
+              },
+              {
+                title: "Itemized Charges",
+                content:
+                  "Detailed breakdown of all charges and applicable taxes.",
+              },
+              {
+                title: "Payment Information",
+                content: "Payment methods, due dates, and billing address.",
+              },
+            ],
+          },
+          newsletter: {
+            pages: [
+              {
+                title: "Newsletter Header",
+                content: "Latest updates and news from our organization.",
+              },
+              {
+                title: "Featured Articles",
+                content: "In-depth articles and insights on industry trends.",
+              },
+              {
+                title: "Company Updates",
+                content:
+                  "Recent developments, announcements, and achievements.",
+              },
+              {
+                title: "Upcoming Events",
+                content: "Calendar of events, webinars, and important dates.",
+              },
+            ],
+          },
+          manual: {
+            pages: [
+              {
+                title: "Getting Started",
+                content: "Introduction and quick start guide for new users.",
+              },
+              {
+                title: "Basic Operations",
+                content:
+                  "Step-by-step instructions for common tasks and procedures.",
+              },
+              {
+                title: "Features",
+                content:
+                  "Detailed guide to advanced functionality and customization.",
+              },
+              {
+                title: "Troubleshooting",
+                content:
+                  "Common issues, solutions, and frequently asked questions.",
+              },
+            ],
+          },
+        };
+
+        const template =
+          contentTemplates[contentType] || contentTemplates["business-report"];
+        const pages = template.pages.slice(0, pageCount);
+
+        // Build CSS based on user selections
+        let css = `
+          body { 
+            font-family: ${fontFamily}; 
+            margin: 0; 
+            padding: 20px; 
+            color: #2c3e50; 
+            line-height: 1.6;
+          }
+          .page { 
+            margin-bottom: 20px; 
+            padding: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px;
+            background: white;
+            ${shadows ? "box-shadow: 0 2px 4px rgba(0,0,0,0.1);" : ""}
+          }
+          .header { 
+            background: ${
+              gradients
+                ? `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`
+                : colors.primary
+            }; 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            border-radius: 8px;
+            ${shadows ? "box-shadow: 0 2px 10px rgba(0,0,0,0.1);" : ""}
+          }
+          .footer { 
+            background: #34495e; 
+            color: white; 
+            padding: 15px; 
+            text-align: center; 
+            font-size: 12px; 
+            margin-top: 20px;
+            border-radius: 8px;
+          }
+          h1 { 
+            color: ${colors.primary}; 
+            border-bottom: 3px solid ${colors.primary}; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px;
+          }
+          h2 { 
+            color: ${colors.secondary}; 
+            margin-top: 30px;
+            margin-bottom: 15px;
+          }
+          .highlight { 
+            background: ${
+              gradients
+                ? `linear-gradient(120deg, ${colors.accent} 0%, #ffffff 100%)`
+                : colors.accent
+            }; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+            border-left: 4px solid ${colors.primary};
+          }
+          .dynamic-content { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border-radius: 4px; 
+            margin: 10px 0; 
+            font-family: monospace;
+            font-size: 14px;
+          }
+        `;
+
+        // Build pages array
+        const pagesArray = pages.map((page, index) => ({
+          section: {
+            class: "page",
+            dataTitle: page.title,
+          },
+          options: {
+            showHeader: headers,
+            showFooter: footers,
+            pageBreakBefore: index > 0,
+          },
+          header: headers
+            ? `<div class="header"><h2>${page.title}</h2><p>${title} - Page ${
+                index + 1
+              }</p></div>`
+            : "",
+          footer: footers
+            ? `<div class="footer">© 2024 ${author} | Page <span class="current">${
+                index + 1
+              }</span> of <span class="total">${pageCount}</span>${
+                timestamps
+                  ? ' | Generated: <span id="generation-time-${index}">Loading...</span>'
+                  : ""
+              }</div>`
+            : "",
+          body: `
+            <main>
+              <h1>${page.title}</h1>
+              <div class="highlight">
+                <p><strong>${page.content}</strong></p>
+              </div>
+              ${
+                javascript
+                  ? `
+                <div class="dynamic-content">
+                  <p><strong>Current Time:</strong> <span id="current-time-${index}">Loading...</span></p>
+                  <p><strong>Page Number:</strong> <span id="page-number-${index}">${
+                      index + 1
+                    }</span></p>
+                  <p><strong>Random ID:</strong> <span id="random-id-${index}">Loading...</span></p>
+                </div>
+              `
+                  : ""
+              }
+              <p>This is page ${
+                index + 1
+              } of ${pageCount} in your ${contentType.replace(
+            "-",
+            " "
+          )} document. The content has been dynamically generated based on your selected options.</p>
+            </main>
+          `,
+        }));
+
+        // Build JavaScript if enabled
+        const scripts = javascript
+          ? [
+              {
+                type: "inline",
+                content: `
+            window.addEventListener('load', () => {
+              const now = new Date();
+              const timeString = now.toLocaleString();
+              const randomId = Math.random().toString(36).substr(2, 9);
+              
+              // Update all dynamic content
+              for (let i = 0; i < ${pageCount}; i++) {
+                const timeElement = document.getElementById('current-time-' + i);
+                const pageElement = document.getElementById('page-number-' + i);
+                const randomElement = document.getElementById('random-id-' + i);
+                const genTimeElement = document.getElementById('generation-time-' + i);
+                
+                if (timeElement) timeElement.textContent = timeString;
+                if (pageElement) pageElement.textContent = i + 1;
+                if (randomElement) randomElement.textContent = randomId;
+                if (genTimeElement) genTimeElement.textContent = timeString;
+              }
+              
+              // Update page numbers in footers
+              const pages = document.querySelectorAll('.page');
+              pages.forEach((page, index) => {
+                const currentSpans = page.querySelectorAll('.current');
+                const totalSpans = page.querySelectorAll('.total');
+                
+                currentSpans.forEach(span => span.textContent = index + 1);
+                totalSpans.forEach(span => span.textContent = pages.length);
+              });
+            });
+          `,
+              },
+            ]
+          : [];
+
+        const requestData = {
+          pdfDocumentBundle: {
+            head: {
+              title: title,
+              meta: [
+                { charset: "utf-8" },
+                { name: "author", content: author },
+                { name: "description", content: subject },
+              ],
+              styles: [{ type: "inline", content: css }],
+            },
+            layout: {
+              page: {
+                size: format,
+                margin: {
+                  top: "20mm",
+                  right: "15mm",
+                  bottom: "20mm",
+                  left: "15mm",
+                },
+                headerHeight: "25mm",
+                footerHeight: "15mm",
+              },
+              safeFrame: {
+                enabled: true,
+                stroke: "2px",
+                color: "#667eea",
+              },
+            },
+            body: {
+              pages: [
+                {
+                  section: {
+                    class: "page",
+                    dataTitle: "Features Demo",
+                  },
+                  options: { showHeader: true, showFooter: true },
+                  header:
+                    '<div class="header"><h2>🚀 PDF Generation</h2><p>Comprehensive multi-page document with custom styling</p></div>',
+                  footer:
+                    '<div class="footer">Generated by PDF Service API | Page <span class="current">1</span> of <span class="total">3</span></div>',
+                  body: `
+                    <main>
+                      <h1>PDF Features Demonstration</h1>
+                      <div class="highlight">
+                        <p><strong>This document showcases the advanced capabilities of the bundleHtml2PDF endpoint:</strong></p>
+                        <ul>
+                          <li>Multi-page document support with individual page customization</li>
+                          <li>Custom headers and footers (global and per-page)</li>
+                          <li>CSS3 styling with gradients and modern layouts</li>
+                          <li>JavaScript execution for dynamic content</li>
+                          <li>Comprehensive PDF options and metadata</li>
+                        </ul>
+                      </div>
+                    </main>
+                  `,
+                },
+                {
+                  section: {
+                    class: "page",
+                    dataTitle: "Configuration Options",
+                  },
+                  options: {
+                    showHeader: true,
+                    showFooter: true,
+                    pageBreakBefore: true,
+                  },
+                  header:
+                    '<div class="header"><h2>⚙️ Configuration Options</h2><p>Comprehensive control over PDF generation</p></div>',
+                  footer:
+                    '<div class="footer">PDF Service API | Page <span class="current">2</span> of <span class="total">3</span></div>',
+                  body: `
+                    <main>
+                      <h1>Configuration Capabilities</h1>
+                      <div class="grid">
+                        <div class="card">
+                          <h3>📄 Page Layout</h3>
+                          <p>Custom page sizes, margins, orientation, and header/footer heights with CSS units.</p>
+                        </div>
+                        <div class="card">
+                          <h3>🎨 Styling</h3>
+                          <p>Full CSS3 support including gradients, animations, flexbox, grid, and responsive design.</p>
+                        </div>
+                        <div class="card">
+                          <h3>🔒 Security</h3>
+                          <p>HTML sanitization, external resource control, and safe frame visualization for debugging.</p>
+                        </div>
+                        <div class="card">
+                          <h3>📊 Metadata</h3>
+                          <p>Custom PDF metadata including title, author, subject, keywords, and creator information.</p>
+                        </div>
+                      </div>
+                    </main>
+                  `,
+                },
+                {
+                  section: { class: "page", dataTitle: "Dynamic Content" },
+                  options: {
+                    showHeader: true,
+                    showFooter: true,
+                    pageBreakBefore: true,
+                  },
+                  header:
+                    '<div class="header"><h2>🚀 Dynamic Content</h2><p>JavaScript execution and interactive elements</p></div>',
+                  footer:
+                    '<div class="footer">PDF Service API | Page <span class="current">3</span> of <span class="total">3</span></footer>',
+                  body: `
+                    <main>
+                      <h1>Dynamic Content Generation</h1>
+                      <div class="highlight">
+                        <p><strong>Current Time:</strong> <span id=\"current-time\">Loading...</span></p>
+                        <p><strong>Random Number:</strong> <span id=\"random-number\">Loading...</span></p>
+                        <p><strong>Page Count:</strong> <span id=\"page-count\">Loading...</span></p>
+                      </div>
+                      <p>This page demonstrates JavaScript execution within the PDF generation process. The values above are populated dynamically using custom JavaScript code.</p>
+                    </main>
+                  `,
+                },
+              ],
+            },
+            scripts: [
+              {
+                type: "inline",
+                content: `
+                window.addEventListener('load', () => {
+                  // Update current time
+                  const timeElement = document.getElementById('current-time');
+                  if (timeElement) {
+                    timeElement.textContent = new Date().toLocaleString();
+                  }
+                  
+                  // Generate random number
+                  const randomElement = document.getElementById('random-number');
+                  if (randomElement) {
+                    randomElement.textContent = Math.floor(Math.random() * 1000);
+                  }
+                  
+                  // Update page count
+                  const pageCountElement = document.getElementById('page-count');
+                  if (pageCountElement) {
+                    const pages = document.querySelectorAll('.page');
+                    pageCountElement.textContent = pages.length;
+                  }
+                  
+                  // Update page numbers in footers
+                  const pages = document.querySelectorAll('.page');
+                  pages.forEach((page, index) => {
+                    const currentSpans = page.querySelectorAll('.current');
+                    const totalSpans = page.querySelectorAll('.total');
+                    
+                    currentSpans.forEach(span => {
+                      span.textContent = index + 1;
+                    });
+                    
+                    totalSpans.forEach(span => {
+                      span.textContent = pages.length;
+                    });
+                  });
+                });
+              `,
+              },
+            ],
+          },
+          pdfOptions: {
+            format: format,
+            landscape: landscape,
+            printBackground: true,
+            scale: 1,
+          },
+          fileName: filename,
+          metadata: {
+            title: "PDF Test Document",
+            author: "PDF Service API",
+            subject: "PDF generation demonstration",
+            keywords: "PDF, advanced, API, generation, customization",
+          },
+        };
+
+        try {
+          const response = await fetch("/api/v1/bundle/bundleHtml2PDF", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          });
+
+          loading.style.display = "none";
+          responseDiv.style.display = "block";
+
+          if (response.ok) {
+            // Handle PDF response
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${filename}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            const successData = JSON.stringify(
+              {
+                message: "PDF generated successfully!",
+                status: response.status,
+                contentType: response.headers.get("content-type"),
+                size: `${blob.size} bytes`,
+                filename: `${filename}.pdf`,
+                features: [
+                  "Multi-page document with custom headers/footers",
+                  "CSS3 styling with gradients",
+                  "JavaScript execution for dynamic content",
+                  "Custom metadata and filename",
+                  "Safe frame visualization",
+                ],
+                note: "PDF has been downloaded automatically",
+              },
+              null,
+              2
+            );
+
+            displayPrettyResponse(
+              "bundle-advanced-response",
+              response.status,
+              successData,
+              "PDF Generation Success"
+            );
+          } else {
+            const errorText = await response.text();
+            displayPrettyResponse(
+              "bundle-advanced-response",
+              response.status,
+              errorText,
+              "PDF Generation Error"
+            );
+          }
+        } catch (error) {
+          loading.style.display = "none";
+          responseDiv.style.display = "block";
+
+          let errorMessage;
+          if (
+            error.message.includes(
+              "listener indicated an asynchronous response"
+            )
+          ) {
+            errorMessage = JSON.stringify(
+              {
+                error: "Browser Extension Conflict",
+                message:
+                  "Please try in Incognito mode or disable browser extensions",
+                originalError: error.message,
+              },
+              null,
+              2
+            );
+          } else {
+            errorMessage = JSON.stringify(
+              {
+                error: "Network Error",
+                message: error.message,
+              },
+              null,
+              2
+            );
+          }
+
+          displayPrettyResponse(
+            "bundle-advanced-response",
+            0,
+            errorMessage,
+            "Error"
+          );
+        }
+      }
+
+      // Clear response
+      function clearResponse() {
+        document.getElementById("bundle-response").style.display = "none";
+        document.getElementById("bundle-advanced-response").style.display =
+          "none";
+        document.getElementById("health-response").style.display = "none";
+      }
+
+      // Smooth scrolling for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+    </script>
+
+    <!-- Health Status Widget -->
+    <script src="../js/health-status.js"></script>
+  </body>
+</html>

@@ -1,0 +1,272 @@
+{
+  "pdfDocumentBundle": {
+    "head": {
+      "title": "HomeLend Mortgage Offer – ~20 pages with long section",
+      "meta": [
+        {
+          "charset": "utf-8"
+        },
+        {
+          "name": "viewport",
+          "content": "width=device-width,initial-scale=1"
+        }
+      ],
+      "styles": [
+        {
+          "type": "inline",
+          "content": "\n<style>\n:root{\n  --header-h:15mm; --footer-h:10mm;\n  --page-width:210mm; --page-height:297mm;\n  --muted:#6b7280; --accent:#0b5fff;\n}\n*{ box-sizing:border-box; }\nhtml, body{ margin:0; padding:0; background:#fff; }\nbody{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color:#111; }\n.page{ width:var(--page-width); height:var(--page-height); position:relative; background:#fff; page-break-after:always; }\n.page:last-child{ page-break-after:auto; }\n.hdr{ height:var(--header-h); padding:6px 10mm; display:flex; align-items:center; gap:10px; border-bottom:2px solid #e5e7eb; background:linear-gradient(90deg,#f4f7ff,#fff); }\n.hdr svg{ height:calc(var(--header-h) - 8px); width:auto; }\n.ftr{ height:var(--footer-h); border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between; padding:0 10mm; color:var(--muted); font-size:11px; }\n.body{ position:absolute; top:var(--header-h); bottom:var(--footer-h); left:0; right:0; padding:10mm; overflow:hidden; }\n.flow > * { break-inside: avoid; }\n\nh1{ font-size:22px; margin:0 0 6px 0; letter-spacing:.02em; }\nh2{ font-size:18px; margin:10px 0 6px 0; }\np{ line-height:1.45; margin:0 0 6px 0; }\n.badge{ display:inline-block; background:var(--accent); color:#fff; padding:.2rem .5rem; border-radius:999px; font-size:12px; }\n.note{ color:var(--muted); font-size:12px; }\n.kv{ width:100%; border-collapse:collapse; font-size:13px; margin:6px 0; }\n.kv th, .kv td{ border:1px solid #e5e7eb; padding:6px 8px; text-align:left; vertical-align:top; }\n.kv th{ background:#f7f9ff; width:36%; }\n.table{ width:100%; border-collapse:collapse; font-size:13px; margin:6px 0; }\n.table th, .table td{ border:1px solid #e5e7eb; padding:6px 8px; vertical-align:top; }\n.table thead th{ background:#f7f9ff; }\n.money{ font-variant-numeric: tabular-nums; text-align:right; }\n.forcePageEnd{ page-break-after:always; break-after:page; height:1px; background:transparent; }\n.warning{ border-left:4px solid #ea580c; padding:8px 10px; background:#fff7ed; }\n.info{ border-left:4px solid var(--accent); padding:8px 10px; background:#f5f8ff; }\n.checklist{ columns:2; column-gap:16px; }\n@page{ size:210mm 297mm; margin:0; }\n</style>\n"
+        }
+      ]
+    },
+    "layout": {
+      "page": {
+        "size": "A4",
+        "margin": {
+          "top": "0mm",
+          "right": "0mm",
+          "bottom": "0mm",
+          "left": "0mm"
+        },
+        "headerHeight": "15mm",
+        "footerHeight": "10mm"
+      },
+      "safeFrame": {
+        "enabled": false,
+        "stroke": "0px",
+        "color": "#000",
+        "topOffset": "0px",
+        "bottomOffset": "0px",
+        "leftOffset": "0px",
+        "rightOffset": "0px"
+      },
+      "useBuiltInPaginator": true
+    },
+    "security": {
+      "sanitizeHtml": true,
+      "allowExternalResources": true
+    },
+    "body": {
+      "document": {
+        "class": "document"
+      },
+      "pages": [
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Mortgage Offer – Cover"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Mortgage Offer – Cover</h1>\n<p class='note'>Offer ID: <strong>MORT-2025-52445</strong> • Offer Date: 12 Sep 2025 • Offer Expires: 12 Oct 2025</p>\n<table class='kv'>\n  <tr><th>Lender</th><td>HomeLend Bank plc</td></tr>\n  <tr><th>Borrower(s)</th><td>Priya Shah & Daniel Baker</td></tr>\n  <tr><th>Property</th><td>14 Willow Grove, Cambridge, CB1 2AB</td></tr>\n  <tr><th>Loan Amount</th><td>£372,000.00</td></tr>\n  <tr><th>Purchase Price / Value</th><td>£465,000.00</td></tr>\n  <tr><th>Loan to Value (LTV)</th><td>80.0%</td></tr>\n</table>\n<div class='info'><strong>Summary:</strong> 5-year fixed rate then reverts to SVR, 30-year capital & interest repayment. Buildings insurance required prior to completion.</div>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Borrower Details"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Borrower Details</h1>\n<table class='kv'>\n  <tr><th>Names</th><td>Priya Shah (DOB 12/03/1993); Daniel Baker (DOB 22/11/1991)</td></tr>\n  <tr><th>Current Address</th><td>Flat 5, 8 Rowan Street, Cambridge, CB2 1YZ</td></tr>\n  <tr><th>Residency</th><td>UK Residents • Indefinite leave to remain</td></tr>\n  <tr><th>Employment</th><td>Priya: Software Engineer (Perm); Daniel: Teacher (Perm)</td></tr>\n  <tr><th>Income</th><td>£74,000 + £5,000 bonus; £41,500</td></tr>\n  <tr><th>Credit Conduct</th><td>No adverse in last 6 years</td></tr>\n</table>\n<p class='note'>This offer is subject to ongoing verification until completion.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Property Details"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Property Details</h1>\n<table class='kv'>\n  <tr><th>Address</th><td>14 Willow Grove, Cambridge, CB1 2AB</td></tr>\n  <tr><th>Tenure</th><td>Freehold</td></tr>\n  <tr><th>Construction</th><td>Brick and tile, standard construction</td></tr>\n  <tr><th>Valuation</th><td>Mortgage Valuation at £465,000.00 (satisfactory)</td></tr>\n  <tr><th>Occupancy</th><td>Main residential home</td></tr>\n</table>\n<div class='warning'>Special Condition: Retention of £2,000 until damp-proof course repairs are evidenced post-completion.</div>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Loan Summary"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Loan Summary</h1>\n<table class='kv'>\n  <tr><th>Product</th><td>5-Year Fixed (to 31 Oct 2030) then HLB Standard Variable Rate</td></tr>\n  <tr><th>Loan Amount</th><td>£372,000.00</td></tr>\n  <tr><th>Term</th><td>30 years (360 months)</td></tr>\n  <tr><th>Interest Rate</th><td>5.19% fixed for 60 months</td></tr>\n  <tr><th>APRC</th><td>5.3%</td></tr>\n  <tr><th>Repayment Type</th><td>Capital & Interest</td></tr>\n  <tr><th>Estimated Monthly Payment (fixed period)</th><td>£2,040.40</td></tr>\n</table>\n<h2>Amortisation Snapshot (Year 1)</h2>\n<table class='table'>\n  <thead><tr><th>Month</th><th>Payment</th><th>Interest</th><th>Capital</th><th>Balance</th></tr></thead>\n  <tbody>\n    <tr><td>1</td><td class='money'>£2,040.40</td><td class='money'>£1,608.90</td><td class='money'>£431.50</td><td class='money'>£371,568.50</td></tr><tr><td>2</td><td class='money'>£2,040.40</td><td class='money'>£1,615.86</td><td class='money'>£424.54</td><td class='money'>£371,135.13</td></tr><tr><td>3</td><td class='money'>£2,040.40</td><td class='money'>£1,622.85</td><td class='money'>£417.55</td><td class='money'>£370,699.89</td></tr><tr><td>4</td><td class='money'>£2,040.40</td><td class='money'>£1,629.87</td><td class='money'>£410.53</td><td class='money'>£370,262.77</td></tr><tr><td>5</td><td class='money'>£2,040.40</td><td class='money'>£1,636.92</td><td class='money'>£403.48</td><td class='money'>£369,823.76</td></tr><tr><td>6</td><td class='money'>£2,040.40</td><td class='money'>£1,643.99</td><td class='money'>£396.41</td><td class='money'>£369,382.84</td></tr><tr><td>7</td><td class='money'>£2,040.40</td><td class='money'>£1,651.10</td><td class='money'>£389.30</td><td class='money'>£368,940.03</td></tr><tr><td>8</td><td class='money'>£2,040.40</td><td class='money'>£1,658.25</td><td class='money'>£382.15</td><td class='money'>£368,495.29</td></tr><tr><td>9</td><td class='money'>£2,040.40</td><td class='money'>£1,665.42</td><td class='money'>£374.98</td><td class='money'>£368,048.63</td></tr><tr><td>10</td><td class='money'>£2,040.40</td><td class='money'>£1,672.62</td><td class='money'>£367.78</td><td class='money'>£367,600.04</td></tr><tr><td>11</td><td class='money'>£2,040.40</td><td class='money'>£1,679.85</td><td class='money'>£360.55</td><td class='money'>£367,149.51</td></tr><tr><td>12</td><td class='money'>£2,040.40</td><td class='money'>£1,687.12</td><td class='money'>£353.28</td><td class='money'>£366,697.04</td></tr>\n  </tbody>\n</table>\n<p class='note'>Figures are illustrative and may vary slightly on completion.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Product Features"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Product Features</h1>\n<ul class='checklist'>\n  <li>Fixed rate for first 60 months.</li>\n  <li>Reversion to Standard Variable Rate thereafter.</li>\n  <li>Up to 10% overpayment of starting balance per year without charge during fixed period.</li>\n  <li>Porting available, subject to lending criteria at the time.</li>\n  <li>Payment holiday may be available after 12 months subject to affordability.</li>\n</ul>\n<div class='info'>If you move or remortgage during the fixed period, Early Repayment Charges may apply (see ERC table).</div>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Fees & Costs"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Fees & Costs</h1>\n<table class='table'>\n  <thead><tr><th>Description</th><th class='money'>Amount</th><th>Payable</th></tr></thead>\n  <tbody>\n    <tr><td>Product Fee</td><td class='money'>£999.00</td><td>Added to loan</td></tr>\n    <tr><td>Valuation Fee</td><td class='money'>£350.00</td><td>Upfront</td></tr>\n    <tr><td>Solicitor (estimate)</td><td class='money'>£850.00</td><td>On completion</td></tr>\n    <tr><td>Funds Transfer</td><td class='money'>£35.00</td><td>On completion</td></tr>\n  </tbody>\n</table>\n<p class='note'>Third-party fees are indicative and may change.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Funds Disbursement"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Funds Disbursement</h1>\n<table class='kv'>\n  <tr><th>Gross Loan</th><td>£372,999.00 (incl. product fee)</td></tr>\n  <tr><th>Less Retention</th><td>£2,000.00</td></tr>\n  <tr><th>Net Advance</th><td>£370,999.00</td></tr>\n  <tr><th>Payee</th><td>Your solicitor's client account</td></tr>\n</table>\n<p>Your solicitor will settle any apportionments, stamp duty (if applicable), and their fees from your funds.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Direct Debit Mandate"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Direct Debit Mandate</h1>\n<p>Payments will be collected monthly on the 1st. You may choose any date from the 1st to the 28th.</p>\n<table class='kv'>\n  <tr><th>Account Name</th><td>Priya Shah</td></tr>\n  <tr><th>Sort Code</th><td>04-00-04</td></tr>\n  <tr><th>Account Number</th><td>12345678</td></tr>\n</table>\n<p class='note'>We are a member of the Direct Debit Guarantee.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Early Repayment Charges (ERC)"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Early Repayment Charges (ERC)</h1>\n<table class='table'>\n  <thead><tr><th>During Fixed Period</th><th>Charge</th></tr></thead>\n  <tbody><tr><td>Year 1</td><td>5% of amount repaid early</td></tr><tr><td>Year 2</td><td>4% of amount repaid early</td></tr><tr><td>Year 3</td><td>3% of amount repaid early</td></tr><tr><td>Year 4</td><td>2% of amount repaid early</td></tr><tr><td>Year 5</td><td>1% of amount repaid early</td></tr></tbody>\n</table>\n<p class='info'>No ERC after fixed period ends. Overpayments within 10% allowance are not charged.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Overpayments & Payment Holidays"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Overpayments & Payment Holidays</h1>\n<p>You may overpay up to 10% of the opening balance each year without charge during the fixed period.</p>\n<p>Overpaying will reduce your term or payment, depending on your choice at the time of overpayment.</p>\n<p>Payment holidays may be available after 12 consecutive on-time payments and are subject to affordability checks.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Insurance Requirements"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Insurance Requirements</h1>\n<p>Buildings insurance for the full reinstatement value must be in place from exchange of contracts.</p>\n<p>Life and income protection insurance are recommended but not mandatory.</p>\n<p>If the property is leasehold, ensure ground rent and service charges are covered in your budgeting.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Valuation & Surveys"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Valuation & Surveys</h1>\n<p>We have instructed a mortgage valuation to confirm suitability as security. This is not a structural survey.</p>\n<p>You are advised to obtain your own RICS HomeBuyer or Building Survey for a comprehensive assessment.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Special Conditions"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Special Conditions</h1>\n<ol>\n  <li>Retention of £2,000 until damp-proof works are certified by a qualified contractor.</li>\n  <li>Provide evidence of buildings insurance naming HomeLend Bank plc as interested party.</li>\n  <li>Assignment of any new-build warranty or guarantees where applicable.</li>\n</ol>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Solicitor Instructions"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Solicitor Instructions</h1>\n<p>Your solicitor must:</p>\n<ul>\n  <li>Confirm good and marketable title and report any material issues.</li>\n  <li>Check planning/building regulation consents and restrictive covenants.</li>\n  <li>Obtain searches and satisfy lender handbook requirements.</li>\n  <li>Register the charge at HM Land Registry.</li>\n</ul>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Regulatory Disclosures"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Regulatory Disclosures</h1>\n<p>This mortgage is regulated by the Financial Conduct Authority.</p>\n<table class='kv'>\n  <tr><th>APRC</th><td>5.3%</td></tr>\n  <tr><th>Total Amount Payable</th><td>Shown in your ESIS illustration and includes interest over the term.</td></tr>\n  <tr><th>Variable Rate Risk</th><td>Payments may increase after the fixed period if rates rise.</td></tr>\n</table>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Complaints & Redress"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Complaints & Redress</h1>\n<p>Contact: complaints@homelend.co.uk • 0800 123 4455</p>\n<p>If you are not satisfied, you may refer to the Financial Ombudsman Service.</p>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Glossary"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "<main class='body'><div class='flow'><h1>Glossary</h1>\n<table class='table'>\n  <thead><tr><th>Term</th><th>Meaning</th></tr></thead>\n  <tbody>\n    <tr><td>APRC</td><td>Annual Percentage Rate of Charge, a total cost of borrowing measure.</td></tr>\n    <tr><td>ERC</td><td>Early Repayment Charge, fee for repaying during a tie-in period.</td></tr>\n    <tr><td>LTV</td><td>Loan to Value ratio (Loan ÷ Property Value).</td></tr>\n    <tr><td>SVR</td><td>Standard Variable Rate set by the lender after introductory period.</td></tr>\n  </tbody>\n</table>\n</div></main>"
+        },
+        {
+          "section": {
+            "class": "page",
+            "dataTitle": "Standard Mortgage Conditions (Long)"
+          },
+          "options": {
+            "showHeader": true,
+            "showFooter": true
+          },
+          "body": "\n<main class='body'><div class='flow'>\n  <h1>Standard Mortgage Conditions (Long)</h1>\n  <p class='note'>This single logical page is intentionally long; it will be split into 3 physical pages via automatic pagination and manual break markers.</p>\n<p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>1) Payments & Interest — You must make each monthly repayment on the due date by Direct Debit. Interest accrues daily on the outstanding balance at the applicable rate. If a payment is missed, we may charge interest on the shortfall and any reasonable costs incurred in recovering arrears.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><p>2) Early Repayment — You may repay the loan in full or part at any time. During the fixed period, Early Repayment Charges may apply as set out in the ERC table. Partial overpayments reduce the balance immediately.</p><div class='forcePageEnd' aria-hidden='true'></div><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>3) Insurance — You must keep adequate buildings insurance in place at all times, covering the full reinstatement value, and provide evidence upon request. If you do not, we may arrange cover and add the cost to your loan.</p><p>4) Property Condition — You must maintain the property in good repair and not make structural alterations without consent. We may inspect the property upon reasonable notice.</p><p>4) Property Condition — You must maintain the property in good repair and not make structural alterations without consent. We may inspect the property upon reasonable notice.</p><p>4) Property Condition — You must maintain the property in good repair and not make structural alterations without consent. We may inspect the property upon reasonable notice.</p><p>4) Property Condition — You must maintain the property in good repair and not make structural alterations without consent. We may inspect the property upon reasonable notice.</p><p>4) Property Condition — You must maintain the property in good repair and not make structural alterations without consent. We may inspect the property upon reasonable notice.</p><p>4) Property Condition — You must maintain the property in good repair and not make structural alterations without consent. We may inspect the property upon reasonable notice.</p><div class='forcePageEnd' aria-hidden='true'></div><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>5) Default — If you miss payments or breach these conditions, we may take steps to recover sums due, appoint receivers, or seek possession through the courts as a last resort. We will always consider forbearance where appropriate.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>6) Assignment & Porting — We may transfer our rights under the mortgage. You may apply to port the product to a new property, subject to valuation and underwriting.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p><p>7) Data Protection — We process personal data in accordance with our privacy notice and applicable law. You have rights of access, rectification, and objection.</p></div></main>"
+        }
+      ]
+    },
+    "header": "\n<header>\n  <div class=\"hdr\">\n    <div class=\"brand\"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60'>\n      <defs>\n        <linearGradient id='g' x1='0' x2='1' y1='0' y2='1'>\n          <stop offset='0' stop-color='#0b5fff' stop-opacity='.25'/>\n          <stop offset='1' stop-color='#0b5fff' stop-opacity='.05'/>\n        </linearGradient>\n      </defs>\n      <rect x='0' y='0' width='240' height='60' rx='10' ry='10' fill='url(#g)'/>\n      <path d='M20 36 L48 18 L76 36' fill='none' stroke='#0b5fff' stroke-width='4' stroke-linecap='round'/>\n      <text x='90' y='38' font-family='Arial, Helvetica, sans-serif' font-size='24' fill='#0b5fff'>HOMELEND</text>\n    </svg></div>\n    <div class=\"badge\">Mortgage Offer</div>\n  </div>\n</header>\n",
+    "footer": "\n<footer>\n  <div class=\"ftr\">\n    <div>HomeLend Bank plc • FCRN 776655</div>\n    <div>Page <span class=\"current\"></span> / <span class=\"total\"></span></div>\n  </div>\n</footer>\n",
+    "scripts": [
+      {
+        "type": "inline",
+        "content": "\n<script>\n// Paginates each .page body (between fixed header/footer), honors .forcePageEnd,\n// and writes page numbers after splitting.\nwindow.addEventListener('load', () => {\n  const BUFFER = 2;\n  function ensureFlow(page){\n    const body = page.querySelector('.body');\n    let flow = body.querySelector(':scope > .flow');\n    if(!flow){\n      flow = document.createElement('div');\n      flow.className = 'flow';\n      const kids = Array.from(body.childNodes);\n      body.innerHTML='';\n      kids.forEach(k => flow.appendChild(k));\n      body.appendChild(flow);\n    }\n    return { body, flow };\n  }\n  function makePageAfter(prevPage){\n    const clone = prevPage.cloneNode(true);\n    const cBody = clone.querySelector('.body');\n    cBody.innerHTML='';\n    const cFlow = document.createElement('div');\n    cFlow.className = 'flow';\n    cBody.appendChild(cFlow);\n    prevPage.parentNode.insertBefore(clone, prevPage.nextSibling);\n    return { page: clone, body: cBody, flow: cFlow };\n  }\n  function paginate(page){\n    const { body, flow } = ensureFlow(page);\n    const items = Array.from(flow.children);\n    flow.innerHTML='';\n    let cur = { page, body, flow };\n    for(const el of items){\n      if(el.classList && el.classList.contains('forcePageEnd')){\n        if(cur.flow.childElementCount > 0){ cur = makePageAfter(cur.page); }\n        continue;\n      }\n      cur.flow.appendChild(el);\n      const elBottom = el.getBoundingClientRect().bottom;\n      const bodyBottom = cur.body.getBoundingClientRect().bottom;\n      if(elBottom > bodyBottom - BUFFER){\n        cur.flow.removeChild(el);\n        const next = makePageAfter(cur.page);\n        next.flow.appendChild(el);\n        cur = next;\n      }\n    }\n  }\n  const originals = Array.from(document.querySelectorAll('.page'));\n  originals.forEach(pg => paginate(pg));\n\n  const pages = Array.from(document.querySelectorAll('.page'));\n  const total = pages.length;\n  pages.forEach((pg, i) => {\n    pg.querySelectorAll('.current').forEach(el => el.textContent = String(i+1));\n    pg.querySelectorAll('.total').forEach(el => el.textContent = String(total));\n  });\n});\n</script>\n"
+      }
+    ]
+  },
+  "pdfOptions": {
+    "format": "A4",
+    "printBackground": true,
+    "margin": {
+      "top": "0",
+      "right": "0",
+      "bottom": "0",
+      "left": "0"
+    }
+  }
+}
