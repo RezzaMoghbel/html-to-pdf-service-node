@@ -146,10 +146,10 @@ app.use("/health", healthRoutes);
 app.use("/api/v1/health", healthRoutes); // Also available under API prefix
 
 // Import API routes
-const bundleHtml2PDF = require("./routes/bundleHtml2PDF");
+const html2pdf = require("./routes/html2pdf");
 
 // Apply API versioning and route organization
-app.use(`${config.apiPrefix}/bundle`, bundleHtml2PDF);
+app.use(`${config.apiPrefix}/html2pdf`, html2pdf);
 
 // =============================================================================
 // API DOCUMENTATION (Swagger UI)

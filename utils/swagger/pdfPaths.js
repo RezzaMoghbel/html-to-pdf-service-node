@@ -2,7 +2,7 @@
 
 // Define the paths object
 const pdfPaths = {
-  "/api/v1/bundle/bundleHtml2PDF": {
+  "/api/v1/html2pdf/convert": {
     post: {
       summary: "Convert HTML or pdfDocumentBundle to PDF",
       description:
@@ -71,7 +71,7 @@ const pdfPaths = {
               description: "Attachment header for file download",
               schema: {
                 type: "string",
-                example: 'attachment; filename="bundle-html2pdf.pdf"',
+                example: 'attachment; filename="html2pdf.pdf"',
               },
             },
             "Content-Type": {
