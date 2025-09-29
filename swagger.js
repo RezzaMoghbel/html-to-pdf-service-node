@@ -26,7 +26,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://api.test-api.co.uk",
+        url: "https://html2pdf.test-api.co.uk",
         description: "Production server",
       },
       {
