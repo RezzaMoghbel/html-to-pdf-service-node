@@ -1352,6 +1352,10 @@ Click "Generate JSON" to see the output...</pre
             const footer = pageData.footer || "";
             const styles = pageData.styles || [];
             const scripts = pageData.scripts || [];
+            const headerHeight = pageData.headerHeight || "";
+            const footerHeight = pageData.footerHeight || "";
+            const showHeader = pageData.options?.showHeader !== false;
+            const showFooter = pageData.options?.showFooter !== false;
 
             addPolicyPageFromBundle(
               title,
@@ -1359,7 +1363,11 @@ Click "Generate JSON" to see the output...</pre
               header,
               footer,
               styles,
-              scripts
+              scripts,
+              headerHeight,
+              footerHeight,
+              showHeader,
+              showFooter
             );
           });
         }
@@ -1372,7 +1380,11 @@ Click "Generate JSON" to see the output...</pre
         header = null,
         footer = null,
         styles = [],
-        scripts = []
+        scripts = [],
+        headerHeight = "",
+        footerHeight = "",
+        showHeader = true,
+        showFooter = true
       ) {
         pageCounter++;
         const pageId = `page-${pageCounter}`;
@@ -1382,8 +1394,8 @@ Click "Generate JSON" to see the output...</pre
           pageNumber: pages.length + 1,
           sectionClass: "page",
           dataTitle: title,
-          showHeader: true,
-          showFooter: true,
+          showHeader: showHeader,
+          showFooter: showFooter,
           body: body,
           header: header || "",
           footer: footer || "",
@@ -1403,6 +1415,8 @@ Click "Generate JSON" to see the output...</pre
           hasCustomJS: scripts.length > 0,
           hasCustomHeader: header ? true : false,
           hasCustomFooter: footer ? true : false,
+          headerHeight: headerHeight,
+          footerHeight: footerHeight,
           isEditing: true,
           isSaved: false,
         };
@@ -1684,6 +1698,18 @@ Click "Generate JSON" to see the output...</pre
         }</textarea>
             </div>
             
+            <div class="form-group" id="customHeaderHeight-${
+              page.id
+            }" style="display: ${page.hasCustomHeader ? "block" : "none"}">
+              <label>Header Height (mm)</label>
+              <input type="text" value="${
+                page.headerHeight || ""
+              }" placeholder="e.g., 20" onchange="updatePageProperty('${
+          page.id
+        }', 'headerHeight', this.value)" ${page.isEditing ? "" : "disabled"} />
+              <small style="color: #666; font-size: 12px;">Override global header height for this page only</small>
+            </div>
+            
             <div class="checkbox-group">
               <input type="checkbox" id="hasCustomFooter-${page.id}" ${
           page.hasCustomFooter ? "checked" : ""
@@ -1703,6 +1729,18 @@ Click "Generate JSON" to see the output...</pre
               }', 'footer', this.value)" ${page.isEditing ? "" : "disabled"}>${
           page.footer
         }</textarea>
+            </div>
+            
+            <div class="form-group" id="customFooterHeight-${
+              page.id
+            }" style="display: ${page.hasCustomFooter ? "block" : "none"}">
+              <label>Footer Height (mm)</label>
+              <input type="text" value="${
+                page.footerHeight || ""
+              }" placeholder="e.g., 15" onchange="updatePageProperty('${
+          page.id
+        }', 'footerHeight', this.value)" ${page.isEditing ? "" : "disabled"} />
+              <small style="color: #666; font-size: 12px;">Override global footer height for this page only</small>
             </div>
           </div>
         `;
@@ -1790,6 +1828,29 @@ Click "Generate JSON" to see the output...</pre
         const page = pages.find((p) => p.id === pageId);
         if (page) {
           page[property] = value;
+
+          // Update height field visibility when relevant properties change
+          if (property === "hasCustomHeader") {
+            const headerHeightDiv = document.getElementById(
+              `customHeaderHeight-${pageId}`
+            );
+            if (headerHeightDiv) {
+              headerHeightDiv.style.display = page.hasCustomHeader
+                ? "block"
+                : "none";
+            }
+          }
+
+          if (property === "hasCustomFooter") {
+            const footerHeightDiv = document.getElementById(
+              `customFooterHeight-${pageId}`
+            );
+            if (footerHeightDiv) {
+              footerHeightDiv.style.display = page.hasCustomFooter
+                ? "block"
+                : "none";
+            }
+          }
         }
       }
 
@@ -1820,8 +1881,14 @@ Click "Generate JSON" to see the output...</pre
         if (page) {
           page.hasCustomHeader = enabled;
           const headerDiv = document.getElementById(`customHeader-${pageId}`);
+          const headerHeightDiv = document.getElementById(
+            `customHeaderHeight-${pageId}`
+          );
           if (headerDiv) {
             headerDiv.style.display = enabled ? "block" : "none";
+          }
+          if (headerHeightDiv) {
+            headerHeightDiv.style.display = enabled ? "block" : "none";
           }
         }
       }
@@ -1831,8 +1898,14 @@ Click "Generate JSON" to see the output...</pre
         if (page) {
           page.hasCustomFooter = enabled;
           const footerDiv = document.getElementById(`customFooter-${pageId}`);
+          const footerHeightDiv = document.getElementById(
+            `customFooterHeight-${pageId}`
+          );
           if (footerDiv) {
             footerDiv.style.display = enabled ? "block" : "none";
+          }
+          if (footerHeightDiv) {
+            footerHeightDiv.style.display = enabled ? "block" : "none";
           }
         }
       }
@@ -2148,9 +2221,19 @@ Click "Generate JSON" to see the output...</pre
                   pageData.header = page.header;
                 }
 
+                // Add page-specific header height if available
+                if (page.hasCustomHeader && page.headerHeight) {
+                  pageData.headerHeight = page.headerHeight;
+                }
+
                 // Add page-specific footer if available
                 if (page.hasCustomFooter && page.footer) {
                   pageData.footer = page.footer;
+                }
+
+                // Add page-specific footer height if available
+                if (page.hasCustomFooter && page.footerHeight) {
+                  pageData.footerHeight = page.footerHeight;
                 }
 
                 if (page.hasCustomCSS && page.customCSS) {
@@ -2672,6 +2755,12 @@ Click "Generate JSON" to see the output...</pre
                     // Add page-specific footer if available
                     ...(page.hasCustomFooter &&
                       page.footer && { footer: page.footer }),
+                    // Add page-specific header height if available
+                    ...(page.hasCustomHeader &&
+                      page.headerHeight && { headerHeight: page.headerHeight }),
+                    // Add page-specific footer height if available
+                    ...(page.hasCustomFooter &&
+                      page.footerHeight && { footerHeight: page.footerHeight }),
                     // Add page-specific CSS if available
                     ...(page.hasCustomCSS &&
                       page.customCSS && {
