@@ -108,6 +108,12 @@ module.exports = {
             type: "string",
             description: "Optional page-level header HTML",
           },
+          headerHeight: {
+            type: "string",
+            description:
+              "Optional page-specific header height (overrides global headerHeight)",
+            example: "20mm",
+          },
           section: {
             type: "object",
             properties: {
@@ -123,6 +129,12 @@ module.exports = {
           footer: {
             type: "string",
             description: "Optional page-level footer HTML",
+          },
+          footerHeight: {
+            type: "string",
+            description:
+              "Optional page-specific footer height (overrides global footerHeight)",
+            example: "15mm",
           },
         },
       },

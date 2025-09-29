@@ -171,12 +171,97 @@ header{
   display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid #e5e7eb;box-sizing:border-box;
 }
+/* Override header height for pages with custom heights */
+.page[data-header-height] header {
+  height: var(--page-header-height, var(--header-h)) !important;
+}
 footer{
   height:var(--footer-h);
   padding:0 var(--pad-h);
   display:flex;align-items:center;justify-content:space-between;
   color:#6b7280;font-size:10px;border-top:1px solid #e5e7eb;
   position:absolute;left:0;right:0;bottom:0;box-sizing:border-box;
+}
+/* Override footer height for pages with custom heights */
+.page[data-footer-height] footer {
+  height: var(--page-footer-height, var(--footer-h)) !important;
+}
+
+/* Header utility classes */
+.hdr{
+  height: var(--header-h);
+  padding: 5px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+  width: 100%;
+  overflow: hidden;
+}
+.hdr[data-align="left"]   { justify-content: flex-start; }
+.hdr[data-align="center"] { justify-content: center; }
+.hdr[data-align="right"]  { justify-content: flex-end; }
+.hdr[data-mode="edges"]  { justify-content: space-between; }
+.hdr[data-mode="spread"] { justify-content: space-evenly; }
+.hdr[data-equalize="true"] > .slot { flex: 1 1 0; }
+
+.hdr > .slot{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.hdr > .slot img,
+.hdr > .slot svg{
+  display: block;
+  max-height: calc(var(--header-h) - 10px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.hdr > .slot.text{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Footer utility classes */
+.ftr{
+  height: var(--footer-h);
+  padding: 5px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.ftr[data-align="left"]   { justify-content: flex-start; }
+.ftr[data-align="center"] { justify-content: center; }
+.ftr[data-align="right"]  { justify-content: flex-end; }
+.ftr > .slot{
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.ftr > .slot.text{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fix logo sizing for pages with custom header heights */
+.page[data-header-height] .hdr {
+  height: var(--page-header-height, var(--header-h)) !important;
+}
+.page[data-header-height] .hdr > .slot img,
+.page[data-header-height] .hdr > .slot svg {
+  max-height: calc(var(--page-header-height, var(--header-h)) - 10px) !important;
+}
+
+/* Fix footer sizing for pages with custom footer heights */
+.page[data-footer-height] .ftr {
+  height: var(--page-footer-height, var(--footer-h)) !important;
 }
 
 /* Body fills between header/footer */
@@ -185,6 +270,16 @@ main.body{
   top:var(--header-h);bottom:var(--footer-h);
   padding:var(--pad-v) var(--pad-h);
   box-sizing:border-box;overflow:hidden;
+}
+
+/* Pages with no header should start from top */
+.page.no-header main.body {
+  top: 0 !important;
+}
+
+/* Pages with no footer should extend to bottom */
+.page.no-footer main.body {
+  bottom: 0 !important;
 }
 
 /* Visible safe frame (inset outline that doesn't change layout) */
@@ -226,6 +321,60 @@ function paginatorScript() {
 window.addEventListener('load', () => {
   const BUFFER = 2;
 
+  // Apply page-specific header/footer heights
+  function applyPageSpecificHeights() {
+    document.querySelectorAll('.page').forEach(page => {
+      const headerHeight = page.getAttribute('data-header-height');
+      const footerHeight = page.getAttribute('data-footer-height');
+      const hasNoHeader = page.classList.contains('no-header');
+      const hasNoFooter = page.classList.contains('no-footer');
+      
+      // Handle header
+      if (hasNoHeader) {
+        // Page has Display Header: false, so header height should be 0
+        const body = page.querySelector('main.body');
+        if (body) {
+          body.style.top = '0';
+          body.style.setProperty('top', '0', 'important');
+        }
+      } else if (headerHeight) {
+        // Page has custom header height
+        const header = page.querySelector('header');
+        const body = page.querySelector('main.body');
+        if (header) {
+          header.style.height = headerHeight;
+          // Set CSS custom property for the page
+          page.style.setProperty('--page-header-height', headerHeight);
+        }
+        if (body) {
+          body.style.top = headerHeight;
+        }
+      }
+      
+      // Handle footer
+      if (hasNoFooter) {
+        // Page has Display Footer: false, so footer height should be 0
+        const body = page.querySelector('main.body');
+        if (body) {
+          body.style.bottom = '0';
+          body.style.setProperty('bottom', '0', 'important');
+        }
+      } else if (footerHeight) {
+        // Page has custom footer height
+        const footer = page.querySelector('footer');
+        const body = page.querySelector('main.body');
+        if (footer) {
+          footer.style.height = footerHeight;
+          // Set CSS custom property for the page
+          page.style.setProperty('--page-footer-height', footerHeight);
+        }
+        if (body) {
+          body.style.bottom = footerHeight;
+        }
+      }
+    });
+  }
+
   function ensureFlow(page){
     const body = page.querySelector('main.body');
     let flow = body.querySelector(':scope > .flow');
@@ -247,6 +396,45 @@ window.addEventListener('load', () => {
     const cFlow = document.createElement('div'); cFlow.className = 'flow';
     cBody.appendChild(cFlow);
     prevPage.parentNode.insertBefore(clone, prevPage.nextSibling);
+    
+    // Apply page-specific heights to the new page
+    const headerHeight = prevPage.getAttribute('data-header-height');
+    const footerHeight = prevPage.getAttribute('data-footer-height');
+    const hasNoHeader = prevPage.classList.contains('no-header');
+    const hasNoFooter = prevPage.classList.contains('no-footer');
+    
+    if (hasNoHeader) {
+      clone.classList.add('no-header');
+      const body = clone.querySelector('main.body');
+      if (body) body.style.top = '0';
+    } else if (headerHeight) {
+      clone.setAttribute('data-header-height', headerHeight);
+      const header = clone.querySelector('header');
+      const body = clone.querySelector('main.body');
+      if (header) {
+        header.style.height = headerHeight;
+        // Set CSS custom property for the cloned page
+        clone.style.setProperty('--page-header-height', headerHeight);
+      }
+      if (body) body.style.top = headerHeight;
+    }
+    
+    if (hasNoFooter) {
+      clone.classList.add('no-footer');
+      const body = clone.querySelector('main.body');
+      if (body) body.style.bottom = '0';
+    } else if (footerHeight) {
+      clone.setAttribute('data-footer-height', footerHeight);
+      const footer = clone.querySelector('footer');
+      const body = clone.querySelector('main.body');
+      if (footer) {
+        footer.style.height = footerHeight;
+        // Set CSS custom property for the cloned page
+        clone.style.setProperty('--page-footer-height', footerHeight);
+      }
+      if (body) body.style.bottom = footerHeight;
+    }
+    
     return { page: clone, body: cBody, flow: cFlow };
   }
 
@@ -292,6 +480,9 @@ window.addEventListener('load', () => {
     return pages;
   }
 
+  // Apply page-specific heights first
+  applyPageSpecificHeights();
+
   const originals = Array.from(document.querySelectorAll('.page'));
   let allPages = [];
   for(const pg of originals){
@@ -311,7 +502,7 @@ window.addEventListener('load', () => {
 </script>`;
 }
 
-function buildPageSectionAttrs(section = {}, options = {}) {
+function buildPageSectionAttrs(section = {}, options = {}, pageData = {}) {
   const cls = section?.class ? String(section.class) : "";
   const extra = [];
   if (options && options.showHeader === false) extra.push("no-header");
@@ -326,7 +517,29 @@ function buildPageSectionAttrs(section = {}, options = {}) {
     section?.dataTitle != null
       ? ` data-title="${String(section.dataTitle).replace(/"/g, "&quot;")}"`
       : "";
-  return `${clsAttr}${dt}`;
+
+  // Add page-specific height data attributes
+  const heightAttrs = [];
+  if (pageData.headerHeight) {
+    const headerHeight = String(pageData.headerHeight).trim();
+    const formattedHeight = /^\d+(\.\d+)?$/.test(headerHeight)
+      ? `${headerHeight}mm`
+      : headerHeight;
+    heightAttrs.push(
+      ` data-header-height="${formattedHeight.replace(/"/g, "&quot;")}"`
+    );
+  }
+  if (pageData.footerHeight) {
+    const footerHeight = String(pageData.footerHeight).trim();
+    const formattedHeight = /^\d+(\.\d+)?$/.test(footerHeight)
+      ? `${footerHeight}mm`
+      : footerHeight;
+    heightAttrs.push(
+      ` data-footer-height="${formattedHeight.replace(/"/g, "&quot;")}"`
+    );
+  }
+
+  return `${clsAttr}${dt}${heightAttrs.join("")}`;
 }
 
 function normalizeBundle(b) {
@@ -418,8 +631,32 @@ function buildHtmlFromPdfDocumentBundle(pdfDocumentBundle) {
   const scriptBase =
     layout && layout.useBuiltInPaginator !== false ? paginatorScript() : "";
 
-  // 4) User scripts
-  const scriptTags = buildScriptTags(scripts);
+  // 4) User scripts (filter out old paginator scripts if we're using built-in paginator)
+  const filteredScripts =
+    layout && layout.useBuiltInPaginator !== false
+      ? scripts.filter((s) => {
+          if (s.type === "inline" && typeof s.content === "string") {
+            // Remove old paginator scripts that don't have applyPageSpecificHeights
+            const hasLoadListener = s.content.includes(
+              "window.addEventListener('load'"
+            );
+            const hasApplyHeights = s.content.includes(
+              "applyPageSpecificHeights"
+            );
+            const hasPaginateFunction =
+              s.content.includes("function paginate(");
+
+            // Keep scripts that don't have load listeners, or have applyPageSpecificHeights
+            // Also remove scripts that have old paginate function without applyPageSpecificHeights
+            if (hasLoadListener && !hasApplyHeights && hasPaginateFunction) {
+              return false; // Remove old paginator scripts
+            }
+            return true;
+          }
+          return true;
+        })
+      : scripts;
+  const scriptTags = buildScriptTags(filteredScripts);
 
   const docClass = body.document?.class
     ? ` class="${String(body.document.class).replace(/"/g, "&quot;")}"`
@@ -434,25 +671,31 @@ function buildHtmlFromPdfDocumentBundle(pdfDocumentBundle) {
 
   const pagesHtml = pages
     .map((p) => {
-      const secAttrs = buildPageSectionAttrs(p.section || {}, p.options || {});
+      const secAttrs = buildPageSectionAttrs(
+        p.section || {},
+        p.options || {},
+        p
+      );
 
       // precedence: page.header/footer -> global -> empty (if show* true)
       const wantHeader = p.options?.showHeader !== false;
       const wantFooter = p.options?.showFooter !== false;
 
-      const headerHtml =
-        typeof p.header === "string"
-          ? p.header
-          : wantHeader
-          ? globalHeader || `<header></header>`
-          : `<header></header>`;
+      const headerHtml = !wantHeader
+        ? "" // No header element at all when showHeader is false
+        : typeof p.header === "string" && p.header.trim()
+        ? p.header
+        : globalHeader && globalHeader.trim()
+        ? globalHeader
+        : `<header></header>`;
 
-      const footerHtml =
-        typeof p.footer === "string"
-          ? p.footer
-          : wantFooter
-          ? globalFooter || `<footer></footer>`
-          : `<footer></footer>`;
+      const footerHtml = !wantFooter
+        ? "" // No footer element at all when showFooter is false
+        : typeof p.footer === "string" && p.footer.trim()
+        ? p.footer
+        : globalFooter && globalFooter.trim()
+        ? globalFooter
+        : `<footer></footer>`;
 
       const bodyHtml =
         /<main\b[^>]*class=["'][^"']*\bbody\b[^"']*["'][^>]*>/i.test(p.body)
