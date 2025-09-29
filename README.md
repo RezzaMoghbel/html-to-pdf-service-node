@@ -37,8 +37,7 @@ A comprehensive Node.js service for generating PDFs from HTML content with suppo
 
 3. **Access the API**
    - API Documentation: `http://localhost:9005/api-docs.html`
-   - Test UI: `http://localhost:9005/bundle-html2pdf-test-ui.html`
-   - Policy Test UI: `http://localhost:9005/bundle-html2pdf-test-ui-policy.html`
+   - Test UI: `http://localhost:9005/pages/html2pdf-test-ui.html`
 
 ## Configuration
 

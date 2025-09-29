@@ -16,8 +16,7 @@ public/
 ├── pages/                       # HTML pages
 │   ├── api-docs.html           # API documentation
 │   ├── api-reference.html      # API reference guide
-│   ├── bundle-html2pdf-test-ui.html           # Test UI for bundle HTML to PDF
-│   ├── bundle-html2pdf-test-ui-policy.html    # Test UI with policy data
+│   ├── html2pdf-test-ui.html                  # Test UI for HTML2PDF Pro
 │   └── test-pdf.html           # PDF testing page
 └── assets/                      # Static assets (images, fonts, etc.)
     └── (future assets)
@@ -42,8 +41,7 @@ public/
 
 - **`api-docs.html`** - Comprehensive API documentation with examples
 - **`api-reference.html`** - Quick API reference with code examples
-- **`bundle-html2pdf-test-ui.html`** - Interactive test interface for bundle HTML to PDF
-- **`bundle-html2pdf-test-ui-policy.html`** - Pre-configured test UI with policy data
+- **`html2pdf-test-ui.html`** - Interactive test interface for HTML2PDF Pro
 - **`test-pdf.html`** - Simple PDF testing interface
 
 ### Assets Directory (`assets/`)
@@ -56,8 +54,7 @@ public/
 - `/404` → `404.html` (served by error handler)
 - `/pages/api-docs.html` → API documentation
 - `/pages/api-reference.html` → API reference
-- `/pages/bundle-html2pdf-test-ui.html` → Test UI
-- `/pages/bundle-html2pdf-test-ui-policy.html` → Policy test UI
+- `/pages/html2pdf-test-ui.html` → Test UI
 - `/pages/test-pdf.html` → PDF testing
 - `/css/health-status.css` → Health widget styles
 - `/js/health-status.js` → Health widget script
