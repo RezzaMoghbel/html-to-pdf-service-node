@@ -3,6 +3,7 @@ const express = require("express");
 const puppeteer = require("puppeteer");
 const fs = require("fs/promises");
 const path = require("path");
+const { PDFDocument } = require("pdf-lib");
 
 const {
   buildHtmlFromPdfDocumentBundle,
@@ -17,6 +18,33 @@ function nowStamp() {
   const d = new Date();
   const iso = d.toISOString().replace(/[:.]/g, "-");
   return iso;
+}
+
+/**
+ * Compress a PDF buffer using pdf-lib
+ * @param {Buffer} pdfBuffer - The original PDF buffer
+ * @returns {Promise<Buffer>} - The compressed PDF buffer
+ */
+async function compressPDF(pdfBuffer) {
+  try {
+    // Load the PDF document
+    const pdfDoc = await PDFDocument.load(pdfBuffer);
+
+    // Save the document with compression enabled
+    // pdf-lib automatically applies compression when saving
+    const compressedPdfBytes = await pdfDoc.save({
+      useObjectStreams: true, // Enable object streams for better compression
+      addDefaultPage: false,
+    });
+
+    return Buffer.from(compressedPdfBytes);
+  } catch (error) {
+    console.warn(
+      "PDF compression failed, returning original PDF:",
+      error.message
+    );
+    return pdfBuffer; // Return original if compression fails
+  }
 }
 
 async function writeLogFile({ ok, details }) {
@@ -97,7 +125,7 @@ router.post("/convert", async (req, res) => {
     await page.setContent(markup, { waitUntil: "networkidle0" });
 
     // Generate PDF with provided options or defaults
-    const pdfBuffer = await page.pdf({
+    let pdfBuffer = await page.pdf({
       format: pdfOptions.format || "A4",
       printBackground: pdfOptions.printBackground !== false,
       margin: pdfOptions.margin || {
@@ -111,19 +139,39 @@ router.post("/convert", async (req, res) => {
       ...pdfOptions,
     });
 
+    // Apply compression if requested
+    const originalSize = pdfBuffer.length;
+    if (pdfOptions.compress) {
+      pdfBuffer = await compressPDF(pdfBuffer);
+      const compressedSize = pdfBuffer.length;
+      const compressionRatio = (
+        ((originalSize - compressedSize) / originalSize) *
+        100
+      ).toFixed(1);
+      console.log(
+        `PDF compressed: ${originalSize} bytes -> ${compressedSize} bytes (${compressionRatio}% reduction)`
+      );
+    }
+
     // Success flow
     ok = true;
-    logDetails = `PDF generated successfully. Size: ${pdfBuffer.length} bytes`;
+    logDetails = `PDF generated successfully. Size: ${pdfBuffer.length} bytes${
+      pdfOptions.compress ? ` (compressed from ${originalSize} bytes)` : ""
+    }`;
     await writeLogFile({ ok: true, details: logDetails });
 
     // Send success email if requested
     if (emailTo) {
+      const sizeText = pdfOptions.compress
+        ? `Size: ${Math.round(
+            pdfBuffer.length / 1024
+          )}KB (compressed from ${Math.round(originalSize / 1024)}KB)`
+        : `Size: ${Math.round(pdfBuffer.length / 1024)}KB`;
+
       await sendEmail({
         to: emailTo,
         subject: "PDF generated successfully",
-        text: `Your PDF has been generated successfully.\n\nSize: ${Math.round(
-          pdfBuffer.length / 1024
-        )}KB\nGenerated at: ${new Date().toISOString()}`,
+        text: `Your PDF has been generated successfully.\n\n${sizeText}\nGenerated at: ${new Date().toISOString()}`,
       }).catch((e) => console.warn("Email (success) failed:", e.message));
     }
 
