@@ -239,6 +239,33 @@
         background-color: #5a6268;
       }
 
+      .btn-info {
+        background-color: #17a2b8;
+        color: white;
+      }
+
+      .btn-info:hover {
+        background-color: #138496;
+      }
+
+      .btn-success {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background-color: #218838;
+      }
+
+      .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+      }
+
+      .btn-warning:hover {
+        background-color: #e0a800;
+      }
+
       .btn-sm {
         padding: 8px 16px;
         font-size: 12px;
@@ -855,6 +882,22 @@
               </div>
             </div>
 
+            <!-- PDF Compression Options -->
+            <h3
+              style="
+                margin: 30px 0 15px 0;
+                color: #333;
+                border-bottom: 2px solid #e9ecef;
+                padding-bottom: 8px;
+              "
+            >
+              PDF Options
+            </h3>
+            <div class="checkbox-group">
+              <input type="checkbox" id="compressPDF" />
+              <label for="compressPDF">Compress PDF (reduce file size)</label>
+            </div>
+
             <!-- SafeFrame Options -->
             <h3
               style="
@@ -1209,7 +1252,7 @@ Click "Generate JSON" to see the output...</pre
           }
 
           // Load the template data
-          await loadTemplateData(bundle);
+          await loadTemplateData(bundle, data.pdfOptions);
 
           console.log(`Template '${templateName}' loaded successfully`);
 
@@ -1246,7 +1289,7 @@ Click "Generate JSON" to see the output...</pre
       }
 
       // Load template data into the UI
-      async function loadTemplateData(bundle) {
+      async function loadTemplateData(bundle, pdfOptions) {
         // Extract global CSS from the bundle
         const globalCSS =
           bundle.head.styles && bundle.head.styles.length > 0
@@ -1314,6 +1357,41 @@ Click "Generate JSON" to see the output...</pre
         // Set document title from the bundle
         document.getElementById("documentTitle").value =
           bundle.head.title || "Test Document";
+
+        // Load PDF options from template if they exist
+        if (pdfOptions) {
+          // Set page size
+          if (pdfOptions.format) {
+            document.getElementById("pageSize").value = pdfOptions.format;
+          }
+
+          // Set margins
+          if (pdfOptions.margin) {
+            if (pdfOptions.margin.top) {
+              document.getElementById("marginTop").value = pdfOptions.margin.top
+                .replace("mm", "")
+                .replace("cm", "");
+            }
+            if (pdfOptions.margin.right) {
+              document.getElementById("marginRight").value =
+                pdfOptions.margin.right.replace("mm", "").replace("cm", "");
+            }
+            if (pdfOptions.margin.bottom) {
+              document.getElementById("marginBottom").value =
+                pdfOptions.margin.bottom.replace("mm", "").replace("cm", "");
+            }
+            if (pdfOptions.margin.left) {
+              document.getElementById("marginLeft").value =
+                pdfOptions.margin.left.replace("mm", "").replace("cm", "");
+            }
+          }
+
+          // Set compress checkbox
+          if (pdfOptions.compress !== undefined) {
+            document.getElementById("compressPDF").checked =
+              pdfOptions.compress;
+          }
+        }
 
         // Clear the JSON output
         document.getElementById("jsonOutput").textContent =
@@ -1430,47 +1508,47 @@ Click "Generate JSON" to see the output...</pre
       // Initialize with sample data
       function initializeSampleData() {
         const globalCSS = `html, body {
-  margin: 0;
-  padding: 0;
-  background: #fff;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-}
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      }
 
-.document { 
-  background: #fff; 
-  padding: 40px;
-}
+      .document {
+        background: #fff;
+        padding: 40px;
+      }
 
-.page {
-  width: var(--page-width);
-  height: var(--page-height);
-  margin: -20px -20px -20px 0px;
-  background: #fff;
-  position: relative;
-  overflow: hidden;
-  page-break-after: always;
-  background-color: white;
-}
+      .page {
+        width: var(--page-width);
+        height: var(--page-height);
+        margin: -20px -20px -20px 0px;
+        background: #fff;
+        position: relative;
+        overflow: hidden;
+        page-break-after: always;
+        background-color: white;
+      }
 
-.page:last-child { 
-  page-break-after: auto;
-}`;
+      .page:last-child {
+        page-break-after: auto;
+      }`;
 
         const globalHeader = `<header>
-  <div class="hdr" data-align="right">
-    <div class="slot">
-      <img alt="Logo" src="https://www.insuredaily.co.uk/web/assets/images/logo/InsureDaily_short_term_car_insurance_logo.webp">
-    </div>
-  </div>
-</header>`;
+        <div class="hdr" data-align="right">
+          <div class="slot">
+            <img alt="Logo" src="https://www.insuredaily.co.uk/web/assets/images/logo/InsureDaily_short_term_car_insurance_logo.webp">
+          </div>
+        </div>
+      </header>`;
 
         const globalFooter = `<footer>
-  <div class="ftr" data-align="center">
-    <div class="slot text">
-      InsureDaily is a trading name of Ramasis Limited who is authorised and regulated by the Financial Conduct Authority - 306294
-    </div>
-  </div>
-</footer>`;
+        <div class="ftr" data-align="center">
+          <div class="slot text">
+            InsureDaily is a trading name of Ramasis Limited who is authorised and regulated by the Financial Conduct Authority - 306294
+          </div>
+        </div>
+      </footer>`;
 
         // Set initial values (raw content, like Page Body HTML)
         document.getElementById("globalCSS").value = globalCSS;
@@ -1554,196 +1632,218 @@ Click "Generate JSON" to see the output...</pre
         pageElement.id = `page-element-${page.id}`;
 
         pageElement.innerHTML = `
-          <div class="page-header">
-            <h3 class="page-title" id="page-title-${page.id}">Page ${
+                <div class="page-header">
+                  <h3 class="page-title" id="page-title-${page.id}">Page ${
           page.pageNumber
         } (${page.title})</h3>
-            <div class="page-actions">
-              <button class="btn btn-sm btn-secondary" onclick="openPreviewModal('${
-                page.id
-              }')">👁️ Preview</button>
-              <button class="btn btn-sm ${
-                page.isEditing ? "btn-success" : "btn-primary"
-              }" 
-                      onclick="toggleEdit('${page.id}')">
-                ${page.isEditing ? "Save" : "Edit"}
-              </button>
-              <button class="btn btn-sm btn-danger" onclick="deletePage('${
-                page.id
-              }')">Delete</button>
-            </div>
-          </div>
-          <div class="page-content ${page.isEditing ? "" : "disabled"}">
-            <div class="form-group">
-              <label>Page Title</label>
-              <input type="text" value="${
-                page.title
-              }" onchange="updatePageTitle('${page.id}', this.value)" ${
+                  <div class="page-actions">
+                    <button class="btn btn-sm btn-secondary" onclick="openPreviewModal('${
+                      page.id
+                    }')">👁️ Preview</button>
+                    <button class="btn btn-sm ${
+                      page.isEditing ? "btn-success" : "btn-primary"
+                    }"
+                            onclick="toggleEdit('${page.id}')">
+                      ${page.isEditing ? "Save" : "Edit"}
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deletePage('${
+                      page.id
+                    }')">Delete</button>
+                  </div>
+                </div>
+                <div class="page-content ${page.isEditing ? "" : "disabled"}">
+                  <div class="form-group">
+                    <label>Page Title</label>
+                    <input type="text" value="${
+                      page.title
+                    }" onchange="updatePageTitle('${page.id}', this.value)" ${
           page.isEditing ? "" : "disabled"
         } />
-            </div>
-            
-            <div class="form-group">
-              <label>CSS Class Name</label>
-              <input type="text" value="${
-                page.sectionClass
-              }" placeholder="e.g., page, section, content" onchange="updatePageProperty('${
+                  </div>
+
+                  <div class="form-group">
+                    <label>CSS Class Name</label>
+                    <input type="text" value="${
+                      page.sectionClass
+                    }" placeholder="e.g., page, section, content" onchange="updatePageProperty('${
           page.id
         }', 'sectionClass', this.value)" ${page.isEditing ? "" : "disabled"} />
-              <small style="color: #666; font-size: 12px;">Enter a CSS class name (without the dot). Default CSS includes styles for "page" class.</small>
-            </div>
-            
-            <div class="form-group">
-              <label>Page Description</label>
-              <input type="text" value="${
-                page.dataTitle
-              }" onchange="updatePageProperty('${
+                    <small style="color: #666; font-size: 12px;">Enter a CSS class name (without the dot). Default CSS includes styles for "page" class.</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Page Description</label>
+                    <input type="text" value="${
+                      page.dataTitle
+                    }" onchange="updatePageProperty('${
           page.id
         }', 'dataTitle', this.value)" ${page.isEditing ? "" : "disabled"} />
-            </div>
-            
-            <div class="checkbox-group">
-              <input type="checkbox" id="showHeader-${page.id}" ${
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="showHeader-${page.id}" ${
           page.showHeader ? "checked" : ""
-        } 
-                     onchange="updatePageProperty('${
-                       page.id
-                     }', 'showHeader', this.checked)" ${
+        }
+                           onchange="updatePageProperty('${
+                             page.id
+                           }', 'showHeader', this.checked)" ${
           page.isEditing ? "" : "disabled"
         } />
-              <label for="showHeader-${page.id}">Display Header</label>
-            </div>
-            
-            <div class="checkbox-group">
-              <input type="checkbox" id="showFooter-${page.id}" ${
+                    <label for="showHeader-${page.id}">Display Header</label>
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="showFooter-${page.id}" ${
           page.showFooter ? "checked" : ""
-        } 
-                     onchange="updatePageProperty('${
-                       page.id
-                     }', 'showFooter', this.checked)" ${
+        }
+                           onchange="updatePageProperty('${
+                             page.id
+                           }', 'showFooter', this.checked)" ${
           page.isEditing ? "" : "disabled"
         } />
-              <label for="showFooter-${page.id}">Display Footer</label>
-            </div>
-            
-            <div class="checkbox-group">
-              <input type="checkbox" id="hasCustomCSS-${page.id}" ${
+                    <label for="showFooter-${page.id}">Display Footer</label>
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="hasCustomCSS-${page.id}" ${
           page.hasCustomCSS ? "checked" : ""
-        } 
-                     onchange="toggleCustomCSS('${page.id}', this.checked)" ${
+        }
+                           onchange="toggleCustomCSS('${
+                             page.id
+                           }', this.checked)" ${
           page.isEditing ? "" : "disabled"
         } />
-              <label for="hasCustomCSS-${page.id}">Custom CSS</label>
-            </div>
-            
-            <div class="form-group ${
-              page.hasCustomCSS ? "" : "hidden"
-            }" id="customCSS-${page.id}">
-              <label>Custom CSS</label>
-              <textarea onchange="updatePageProperty('${
-                page.id
-              }', 'customCSS', this.value)" ${
+                    <label for="hasCustomCSS-${page.id}">Custom CSS</label>
+                  </div>
+
+                  <div class="form-group ${
+                    page.hasCustomCSS ? "" : "hidden"
+                  }" id="customCSS-${page.id}">
+                    <label>Custom CSS</label>
+                    <textarea onchange="updatePageProperty('${
+                      page.id
+                    }', 'customCSS', this.value)" ${
           page.isEditing ? "" : "disabled"
         }>${page.customCSS}</textarea>
-            </div>
-            
-            <div class="checkbox-group">
-              <input type="checkbox" id="hasCustomJS-${page.id}" ${
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="hasCustomJS-${page.id}" ${
           page.hasCustomJS ? "checked" : ""
-        } 
-                     onchange="toggleCustomJS('${page.id}', this.checked)" ${
+        }
+                           onchange="toggleCustomJS('${
+                             page.id
+                           }', this.checked)" ${
           page.isEditing ? "" : "disabled"
         } />
-              <label for="hasCustomJS-${page.id}">Custom JavaScript</label>
-            </div>
-            
-            <div class="form-group ${
-              page.hasCustomJS ? "" : "hidden"
-            }" id="customJS-${page.id}">
-              <label>Custom JavaScript</label>
-              <textarea onchange="updatePageProperty('${
-                page.id
-              }', 'customJS', this.value)" ${
+                    <label for="hasCustomJS-${
+                      page.id
+                    }">Custom JavaScript</label>
+                  </div>
+
+                  <div class="form-group ${
+                    page.hasCustomJS ? "" : "hidden"
+                  }" id="customJS-${page.id}">
+                    <label>Custom JavaScript</label>
+                    <textarea onchange="updatePageProperty('${
+                      page.id
+                    }', 'customJS', this.value)" ${
           page.isEditing ? "" : "disabled"
         }>${page.customJS}</textarea>
-            </div>
-            
-            <div class="form-group">
-              <label>Page Content</label>
-              <textarea onchange="updatePageProperty('${
-                page.id
-              }', 'body', this.value)" ${page.isEditing ? "" : "disabled"}>${
-          page.body
-        }</textarea>
-            </div>
-            
-            <div class="checkbox-group">
-              <input type="checkbox" id="hasCustomHeader-${page.id}" ${
+                  </div>
+
+                  <div class="form-group">
+                    <label>Page Content</label>
+                    <textarea onchange="updatePageProperty('${
+                      page.id
+                    }', 'body', this.value)" ${
+          page.isEditing ? "" : "disabled"
+        }>${page.body}</textarea>
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="hasCustomHeader-${page.id}" ${
           page.hasCustomHeader ? "checked" : ""
-        } 
-                     onchange="toggleCustomHeader('${
-                       page.id
-                     }', this.checked)" ${page.isEditing ? "" : "disabled"} />
-              <label for="hasCustomHeader-${page.id}">Custom Header</label>
-            </div>
-            
-            <div class="form-group" id="customHeader-${
-              page.id
-            }" style="display: ${page.hasCustomHeader ? "block" : "none"}">
-              <label>Header Content</label>
-              <textarea onchange="updatePageProperty('${
-                page.id
-              }', 'header', this.value)" ${page.isEditing ? "" : "disabled"}>${
-          page.header
-        }</textarea>
-            </div>
-            
-            <div class="form-group" id="customHeaderHeight-${
-              page.id
-            }" style="display: ${page.hasCustomHeader ? "block" : "none"}">
-              <label>Header Height (mm)</label>
-              <input type="text" value="${
-                page.headerHeight || ""
-              }" placeholder="e.g., 20" onchange="updatePageProperty('${
+        }
+                           onchange="toggleCustomHeader('${
+                             page.id
+                           }', this.checked)" ${
+          page.isEditing ? "" : "disabled"
+        } />
+                    <label for="hasCustomHeader-${
+                      page.id
+                    }">Custom Header</label>
+                  </div>
+
+                  <div class="form-group" id="customHeader-${
+                    page.id
+                  }" style="display: ${
+          page.hasCustomHeader ? "block" : "none"
+        }">
+                    <label>Header Content</label>
+                    <textarea onchange="updatePageProperty('${
+                      page.id
+                    }', 'header', this.value)" ${
+          page.isEditing ? "" : "disabled"
+        }>${page.header}</textarea>
+                  </div>
+
+                  <div class="form-group" id="customHeaderHeight-${
+                    page.id
+                  }" style="display: ${
+          page.hasCustomHeader ? "block" : "none"
+        }">
+                    <label>Header Height (mm)</label>
+                    <input type="text" value="${
+                      page.headerHeight || ""
+                    }" placeholder="e.g., 20" onchange="updatePageProperty('${
           page.id
         }', 'headerHeight', this.value)" ${page.isEditing ? "" : "disabled"} />
-              <small style="color: #666; font-size: 12px;">Override global header height for this page only</small>
-            </div>
-            
-            <div class="checkbox-group">
-              <input type="checkbox" id="hasCustomFooter-${page.id}" ${
+                    <small style="color: #666; font-size: 12px;">Override global header height for this page only</small>
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="hasCustomFooter-${page.id}" ${
           page.hasCustomFooter ? "checked" : ""
-        } 
-                     onchange="toggleCustomFooter('${
-                       page.id
-                     }', this.checked)" ${page.isEditing ? "" : "disabled"} />
-              <label for="hasCustomFooter-${page.id}">Custom Footer</label>
-            </div>
-            
-            <div class="form-group" id="customFooter-${
-              page.id
-            }" style="display: ${page.hasCustomFooter ? "block" : "none"}">
-              <label>Footer Content</label>
-              <textarea onchange="updatePageProperty('${
-                page.id
-              }', 'footer', this.value)" ${page.isEditing ? "" : "disabled"}>${
-          page.footer
-        }</textarea>
-            </div>
-            
-            <div class="form-group" id="customFooterHeight-${
-              page.id
-            }" style="display: ${page.hasCustomFooter ? "block" : "none"}">
-              <label>Footer Height (mm)</label>
-              <input type="text" value="${
-                page.footerHeight || ""
-              }" placeholder="e.g., 15" onchange="updatePageProperty('${
+        }
+                           onchange="toggleCustomFooter('${
+                             page.id
+                           }', this.checked)" ${
+          page.isEditing ? "" : "disabled"
+        } />
+                    <label for="hasCustomFooter-${
+                      page.id
+                    }">Custom Footer</label>
+                  </div>
+
+                  <div class="form-group" id="customFooter-${
+                    page.id
+                  }" style="display: ${
+          page.hasCustomFooter ? "block" : "none"
+        }">
+                    <label>Footer Content</label>
+                    <textarea onchange="updatePageProperty('${
+                      page.id
+                    }', 'footer', this.value)" ${
+          page.isEditing ? "" : "disabled"
+        }>${page.footer}</textarea>
+                  </div>
+
+                  <div class="form-group" id="customFooterHeight-${
+                    page.id
+                  }" style="display: ${
+          page.hasCustomFooter ? "block" : "none"
+        }">
+                    <label>Footer Height (mm)</label>
+                    <input type="text" value="${
+                      page.footerHeight || ""
+                    }" placeholder="e.g., 15" onchange="updatePageProperty('${
           page.id
         }', 'footerHeight', this.value)" ${page.isEditing ? "" : "disabled"} />
-              <small style="color: #666; font-size: 12px;">Override global footer height for this page only</small>
-            </div>
-          </div>
-        `;
+                    <small style="color: #666; font-size: 12px;">Override global footer height for this page only</small>
+                  </div>
+                </div>
+              `;
 
         container.appendChild(pageElement);
       }
@@ -2287,6 +2387,7 @@ Click "Generate JSON" to see the output...</pre
               bottom: marginBottom,
               left: marginLeft,
             },
+            compress: document.getElementById("compressPDF").checked,
           },
         };
 
@@ -2302,12 +2403,12 @@ Click "Generate JSON" to see the output...</pre
         const loadingOverlay = document.createElement("div");
         loadingOverlay.className = "loading-overlay";
         loadingOverlay.innerHTML = `
-          <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <h3>Generating PDF</h3>
-            <p>Please wait while we create your PDF document...</p>
-          </div>
-        `;
+                <div class="loading-content">
+                  <div class="loading-spinner"></div>
+                  <h3>Generating PDF</h3>
+                  <p>Please wait while we create your PDF document...</p>
+                </div>
+              `;
         document.body.appendChild(loadingOverlay);
 
         try {
@@ -2525,16 +2626,16 @@ Click "Generate JSON" to see the output...</pre
         modal.className = "confirmation-modal";
 
         modal.innerHTML = `
-          <div class="confirmation-content">
-            <div class="confirmation-icon">⚠️</div>
-            <h3 class="confirmation-title">${title}</h3>
-            <p class="confirmation-message">${message}</p>
-            <div class="confirmation-buttons">
-              <button class="confirmation-btn confirmation-btn-cancel">Cancel</button>
-              <button class="confirmation-btn confirmation-btn-confirm">Confirm</button>
-            </div>
-          </div>
-        `;
+                <div class="confirmation-content">
+                  <div class="confirmation-icon">⚠️</div>
+                  <h3 class="confirmation-title">${title}</h3>
+                  <p class="confirmation-message">${message}</p>
+                  <div class="confirmation-buttons">
+                    <button class="confirmation-btn confirmation-btn-cancel">Cancel</button>
+                    <button class="confirmation-btn confirmation-btn-confirm">Confirm</button>
+                  </div>
+                </div>
+              `;
 
         // Add to page
         document.body.appendChild(modal);
@@ -2600,14 +2701,14 @@ Click "Generate JSON" to see the output...</pre
             : "ℹ️";
 
         toast.innerHTML = `
-          <div class="toast-header">
-            <span class="toast-icon">${icon}</span>
-            <h4 class="toast-title">${title}</h4>
-            <button class="toast-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
-          </div>
-          <p class="toast-message">${message}</p>
-          <div class="toast-progress"></div>
-        `;
+                <div class="toast-header">
+                  <span class="toast-icon">${icon}</span>
+                  <h4 class="toast-title">${title}</h4>
+                  <button class="toast-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+                <p class="toast-message">${message}</p>
+                <div class="toast-progress"></div>
+              `;
 
         // Add to page
         document.body.appendChild(toast);
@@ -2634,12 +2735,12 @@ Click "Generate JSON" to see the output...</pre
         const loadingOverlay = document.createElement("div");
         loadingOverlay.className = "loading-overlay";
         loadingOverlay.innerHTML = `
-          <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <h3>Generating Page Preview PDF</h3>
-            <p>Please wait while we create your single-page PDF...</p>
-          </div>
-        `;
+                <div class="loading-content">
+                  <div class="loading-spinner"></div>
+                  <h3>Generating Page Preview PDF</h3>
+                  <p>Please wait while we create your single-page PDF...</p>
+                </div>
+              `;
         document.body.appendChild(loadingOverlay);
 
         try {
@@ -2811,6 +2912,7 @@ Click "Generate JSON" to see the output...</pre
                 bottom: marginBottom,
                 left: marginLeft,
               },
+              compress: document.getElementById("compressPDF").checked,
             },
           };
 
@@ -2862,6 +2964,71 @@ Click "Generate JSON" to see the output...</pre
         } finally {
           // Remove loading overlay
           document.body.removeChild(loadingOverlay);
+        }
+      }
+
+      // Handle file selection - moved to DOMContentLoaded
+
+      // Helper function to read file as text
+      function readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = (e) => reject(e);
+          reader.readAsText(file);
+        });
+      }
+
+      // Helper function to update layout settings
+      function updateLayoutSettings(layout) {
+        // Update page size
+        if (layout.page && layout.page.size) {
+          const sizeSelect = document.querySelector('select[name="pageSize"]');
+          if (sizeSelect) {
+            sizeSelect.value = layout.page.size;
+          }
+        }
+
+        // Update header/footer heights
+        if (layout.page && layout.page.headerHeight) {
+          const headerHeightInput = document.querySelector(
+            'input[name="headerHeight"]'
+          );
+          if (headerHeightInput) {
+            headerHeightInput.value = layout.page.headerHeight;
+          }
+        }
+
+        if (layout.page && layout.page.footerHeight) {
+          const footerHeightInput = document.querySelector(
+            'input[name="footerHeight"]'
+          );
+          if (footerHeightInput) {
+            footerHeightInput.value = layout.page.footerHeight;
+          }
+        }
+      }
+
+      // Helper function to update head settings
+      function updateHeadSettings(head) {
+        // Update title
+        if (head.title) {
+          const titleInput = document.querySelector(
+            'input[name="documentTitle"]'
+          );
+          if (titleInput) {
+            titleInput.value = head.title;
+          }
+        }
+
+        // Update meta description
+        if (head.meta && head.meta.description) {
+          const descInput = document.querySelector(
+            'textarea[name="metaDescription"]'
+          );
+          if (descInput) {
+            descInput.value = head.meta.description;
+          }
         }
       }
 
