@@ -113,6 +113,11 @@ app.use(
   })
 );
 
+// AUTHENTICATION SYSTEM - Added for authentication system
+// Session middleware for user authentication
+const { configureSession } = require("./middleware/sessionAuth");
+app.use(configureSession(app));
+
 // =============================================================================
 // STATIC FILES (Served before API routes for better performance)
 // =============================================================================
@@ -148,8 +153,16 @@ app.use("/api/v1/health", healthRoutes); // Also available under API prefix
 // Import API routes
 const html2pdf = require("./routes/html2pdf");
 
+// AUTHENTICATION SYSTEM - Added for authentication system
+const authRoutes = require("./routes/auth");
+const dashboardRoutes = require("./routes/dashboard");
+
 // Apply API versioning and route organization
 app.use(`${config.apiPrefix}/html2pdf`, html2pdf);
+
+// AUTHENTICATION SYSTEM - Added for authentication system
+app.use("/auth", authRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 // =============================================================================
 // API DOCUMENTATION (Swagger UI)

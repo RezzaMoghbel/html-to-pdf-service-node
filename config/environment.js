@@ -14,7 +14,7 @@ module.exports = {
   // Security Configuration
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 1000, // Increased from 100 to 1000
   },
   corsOrigin: process.env.CORS_ORIGIN || "*",
 
