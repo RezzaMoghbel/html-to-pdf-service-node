@@ -284,19 +284,60 @@ router.post("/logout",
   csrfProtection,
   async (req, res) => {
     try {
+      // Store session ID and options before destroying
+      const sessionId = req.sessionID;
+      const isProduction = process.env.NODE_ENV === "production";
+      
       // Destroy session
       req.session.destroy((err) => {
         if (err) {
           console.error("Session destruction error:", err);
-          return res.status(500).json({
-            success: false,
-            error: "Logout failed",
-            message: "An error occurred during logout. Please try again.",
-            code: "LOGOUT_ERROR"
+          // Still try to clear cookie even if destroy failed
+        }
+        
+        // Clear cookie with exact same options it was set with
+        // Must match: httpOnly, secure, sameSite, path, domain
+        res.clearCookie("pdf-service-session", {
+          httpOnly: true,
+          secure: isProduction,
+          sameSite: "strict",
+          path: "/",
+          // Don't specify domain - let it match any domain setting
+        });
+        
+        // Also try to clear cookie with domain options (in case domain was set)
+        // This ensures cookie is cleared regardless of how it was set
+        if (req.headers.host) {
+          const hostname = req.headers.host.split(':')[0];
+          res.clearCookie("pdf-service-session", {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: "strict",
+            path: "/",
+            domain: hostname
+          });
+          // Also try without leading dot
+          res.clearCookie("pdf-service-session", {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: "strict",
+            path: "/",
+            domain: '.' + hostname
           });
         }
         
-        res.clearCookie("pdf-service-session");
+        // Set cookie to expire immediately (alternative method)
+        res.cookie("pdf-service-session", "", {
+          httpOnly: true,
+          secure: isProduction,
+          sameSite: "strict",
+          path: "/",
+          expires: new Date(0),
+          maxAge: 0
+        });
+        
+        console.log("Session destroyed and cookie cleared");
+        
         res.json({
           success: true,
           message: "Logout successful"

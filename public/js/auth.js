@@ -218,17 +218,38 @@ async function loginUser(email, password, rememberMe = false) {
  * @returns {Promise<Object>} Logout result
  */
 async function logoutUser() {
+    // Set flag to prevent auto-login
+    sessionStorage.setItem('logoutInProgress', 'true');
+    
+    // Clear ALL localStorage items
+    try {
+        localStorage.clear();
+    } catch (error) {
+        console.error('Error clearing localStorage:', error);
+        // Manually remove known keys
+        localStorage.removeItem("user");
+        localStorage.removeItem("sessionToken");
+        localStorage.removeItem("apiKey");
+    }
+    
+    // Clear sessionStorage except the logout flag
+    try {
+        const logoutFlag = sessionStorage.getItem('logoutInProgress');
+        sessionStorage.clear();
+        if (logoutFlag) {
+            sessionStorage.setItem('logoutInProgress', 'true');
+        }
+    } catch (error) {
+        console.error('Error clearing sessionStorage:', error);
+    }
+    
+    // Clear CSRF token
+    authCsrfToken = null;
+    
     try {
         const result = await makeAuthenticatedRequest("/auth/logout", {
             method: "POST"
         });
-        
-        // Clear localStorage regardless of API response
-        localStorage.removeItem("user");
-        localStorage.removeItem("sessionToken");
-        
-        // Clear CSRF token
-        authCsrfToken = null;
         
         return {
             success: result.success,
@@ -236,11 +257,6 @@ async function logoutUser() {
         };
     } catch (error) {
         console.error("Logout error:", error);
-        
-        // Clear localStorage even if API call fails
-        localStorage.removeItem("user");
-        localStorage.removeItem("sessionToken");
-        authCsrfToken = null;
         
         return {
             success: true,
@@ -254,6 +270,14 @@ async function logoutUser() {
  * @returns {Promise<Object>} Session check result
  */
 async function checkSession() {
+    // Don't check session if logout is in progress
+    if (sessionStorage.getItem('logoutInProgress') === 'true') {
+        return {
+            success: false,
+            error: "Logout in progress"
+        };
+    }
+    
     try {
         const result = await makeAuthenticatedRequest("/auth/session");
         
@@ -272,6 +296,7 @@ async function checkSession() {
             // Clear invalid session data
             localStorage.removeItem("user");
             localStorage.removeItem("sessionToken");
+            localStorage.removeItem("apiKey");
             
             return {
                 success: false,
@@ -284,6 +309,7 @@ async function checkSession() {
         // Clear session data on error
         localStorage.removeItem("user");
         localStorage.removeItem("sessionToken");
+        localStorage.removeItem("apiKey");
         
         return {
             success: false,
@@ -640,7 +666,13 @@ function initializeAuth() {
             const sessionResult = await checkSession();
             if (!sessionResult.success) {
                 // Session invalid, redirect to login
-                window.location.href = "/pages/login.html";
+                try {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                } catch (e) {
+                    console.error('Error clearing storage:', e);
+                }
+                window.location.replace("/pages/login.html");
             }
         }
     });

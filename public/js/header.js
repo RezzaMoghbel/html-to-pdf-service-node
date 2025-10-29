@@ -374,8 +374,69 @@ function setupHeaderLogout(logoutBtnId = 'logoutBtn') {
             burgerMenu.setAttribute('aria-expanded', 'false');
         }
         
+        // Set a flag that we're logging out - this will persist for a few seconds
+        sessionStorage.setItem('justLoggedOut', Date.now().toString());
+        
+        // Clear ALL localStorage and sessionStorage (but keep the logout flag)
         try {
-            console.log('Calling logout API...'); // Debug log
+            localStorage.clear();
+            const logoutTimestamp = sessionStorage.getItem('justLoggedOut');
+            sessionStorage.clear();
+            // Restore logout timestamp
+            if (logoutTimestamp) {
+                sessionStorage.setItem('justLoggedOut', logoutTimestamp);
+            }
+            console.log('Storage cleared');
+        } catch (error) {
+            console.error('Error clearing storage:', error);
+        }
+        
+        // Clear cookies on client side - comprehensive clearing
+        function clearAllCookies() {
+            try {
+                const cookies = document.cookie.split(";");
+                const hostname = window.location.hostname;
+                
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i];
+                    const eqPos = cookie.indexOf("=");
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                    
+                    // Try multiple ways to clear the cookie
+                    // Method 1: Clear with path
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                    
+                    // Method 2: Clear with domain (no leading dot)
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + hostname;
+                    
+                    // Method 3: Clear with domain (with leading dot)
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=." + hostname;
+                    
+                    // Method 4: Set to empty with maxAge 0
+                    document.cookie = name + "=;max-age=0;path=/";
+                    document.cookie = name + "=;max-age=0;path=/;domain=" + hostname;
+                    document.cookie = name + "=;max-age=0;path=/;domain=." + hostname;
+                }
+                
+                // Specifically target the session cookie
+                const sessionCookieName = "pdf-service-session";
+                document.cookie = sessionCookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                document.cookie = sessionCookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + hostname;
+                document.cookie = sessionCookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=." + hostname;
+                document.cookie = sessionCookieName + "=;max-age=0;path=/";
+                document.cookie = sessionCookieName + "=;max-age=0;path=/;domain=" + hostname;
+                document.cookie = sessionCookieName + "=;max-age=0;path=/;domain=." + hostname;
+                
+                console.log('Client-side cookies cleared');
+            } catch (error) {
+                console.error('Error clearing cookies:', error);
+            }
+        }
+        
+        clearAllCookies();
+        
+        try {
+            console.log('Calling logout API...');
             const response = await fetch('/auth/logout', {
                 method: 'POST',
                 credentials: 'include',
@@ -384,23 +445,20 @@ function setupHeaderLogout(logoutBtnId = 'logoutBtn') {
                 }
             });
 
-            if (response.ok) {
-                localStorage.removeItem('user');
-                localStorage.removeItem('apiKey');
-                window.location.href = '/pages/login.html';
-            } else {
-                console.error('Logout failed');
-                // Still redirect to login even if API call fails
-                localStorage.removeItem('user');
-                localStorage.removeItem('apiKey');
-                window.location.href = '/pages/login.html';
-            }
+            // Wait for logout to fully process
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Clear cookies again after API call
+            clearAllCookies();
+            
+            // Redirect to login - the flag will prevent auto-login check
+            window.location.replace('/pages/login.html');
         } catch (error) {
             console.error('Logout error:', error);
-            // Still redirect to login even if API call fails
-            localStorage.removeItem('user');
-            localStorage.removeItem('apiKey');
-            window.location.href = '/pages/login.html';
+            // Clear cookies even if API call fails
+            clearAllCookies();
+            // Still redirect to login
+            window.location.replace('/pages/login.html');
         }
     };
     
