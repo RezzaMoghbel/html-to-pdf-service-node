@@ -77,8 +77,23 @@ const rateLimiter = rateLimit({
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  // Skip rate limiting for health checks
-  skip: (req) => req.path === "/health" || req.path === "/api/v1/health",
+  // Skip rate limiting for health checks, authentication endpoints, and dashboard
+  skip: (req) => {
+    const skipPaths = [
+      "/health",
+      "/api/v1/health",
+      "/auth/logout",
+      "/auth/session",
+      "/auth/refresh-session",
+      "/dashboard/stats",
+      "/dashboard/api-key",
+      "/dashboard/api-key/generate",
+      "/dashboard/api-key/regenerate",
+      "/dashboard/usage",
+      "/dashboard/profile"
+    ];
+    return skipPaths.includes(req.path);
+  },
 });
 
 /**
