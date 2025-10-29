@@ -133,7 +133,7 @@ function rateLimit(options = {}) {
  */
 function authRateLimit(options = {}) {
   const {
-    maxAttempts = 5,
+    maxAttempts = 10,
     windowMs = 900000, // 15 minutes
     blockDuration = 3600000, // 1 hour
     message = "Too many login attempts. Please try again later.",
