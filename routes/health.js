@@ -12,8 +12,11 @@ const { nodeEnv, port } = require("../config/environment");
  * /health:
  *   get:
  *     summary: Basic health check
- *     description: Returns basic service status and system information
+ *     description: Returns basic service status and system information. Requires API key authentication.
  *     tags: [Health]
+ *     security:
+ *       - ApiKeyAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Service is healthy
@@ -60,8 +63,11 @@ router.get("/", (req, res) => {
  * /health/detailed:
  *   get:
  *     summary: Detailed health check
- *     description: Returns detailed system information for monitoring
+ *     description: Returns detailed system information for monitoring. Requires API key authentication.
  *     tags: [Health]
+ *     security:
+ *       - ApiKeyAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Detailed service status

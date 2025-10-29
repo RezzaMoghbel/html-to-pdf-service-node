@@ -8,6 +8,11 @@ const pdfPaths = {
       description:
         "Accepts either HTML content or a pdfDocumentBundle and returns a PDF. Supports basic PDF options like format, margins, and orientation.",
       tags: ["Bundle"],
+      // Add security requirement - supports both API key methods
+      security: [
+        { ApiKeyAuth: [] },
+        { BearerAuth: [] },
+      ],
       requestBody: {
         required: true,
         content: {
@@ -82,6 +87,22 @@ const pdfPaths = {
           content: {
             "application/pdf": {
               schema: { type: "string", format: "binary" },
+            },
+          },
+        },
+        401: {
+          description: "Unauthorized - API key required or invalid",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: { type: "boolean", example: false },
+                  error: { type: "string", example: "API key required" },
+                  message: { type: "string" },
+                  code: { type: "string", example: "MISSING_API_KEY" },
+                },
+              },
             },
           },
         },
