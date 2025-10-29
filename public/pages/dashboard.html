@@ -10,6 +10,9 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
+    <!-- Header Component Styles -->
+    <link rel="stylesheet" href="../css/header.css">
+    
     <!-- CSS Reset and Base Styles -->
     <style>
         /* CSS Reset */
@@ -19,6 +22,17 @@
             box-sizing: border-box;
         }
         
+        /* Prevent overflow on media and container elements */
+        img, video, iframe, embed, object {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        table {
+            width: 100%;
+            table-layout: auto;
+        }
+        
         /* Base Styles */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -26,6 +40,11 @@
             color: #333;
             background: #f8f9fa;
             min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+        
+        html {
+            overflow-x: hidden; /* Prevent horizontal scrolling */
         }
         
         /* Container */
@@ -33,59 +52,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-        }
-        
-        /* Header */
-        .header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 3rem;
-}
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #667eea;
-            text-decoration: none;
-        }
-        
-        .nav-user {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: #667eea;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .user-name {
-            font-weight: 500;
-            color: #333;
         }
         
         .btn {
@@ -358,16 +324,6 @@
                 padding: 0 15px;
             }
             
-            .nav {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .nav-user {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
             .dashboard-header h1 {
                 font-size: 2rem;
             }
@@ -386,6 +342,73 @@
             
             .card-actions .btn {
                 width: 100%;
+            }
+        }
+        
+        /* Extra small screens (Galaxy Fold, etc.) - 425px and below */
+        @media (max-width: 425px) {
+            .container {
+                padding: 0 12px; /* Reduced padding for very small screens */
+                width: 100%;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .dashboard-header p {
+                font-size: 1rem;
+            }
+            
+            .card {
+                padding: 1rem; /* Reduced card padding */
+                border-radius: 8px;
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .card-title {
+                font-size: 1.1rem;
+            }
+            
+            .card-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+            
+            .dashboard-grid {
+                gap: 1rem; /* Reduced gap between cards */
+                width: 100%;
+            }
+            
+            .stat-value {
+                font-size: 2rem !important; /* Smaller stat values */
+            }
+            
+            .stat-label {
+                font-size: 0.85rem !important;
+            }
+            
+            .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                width: 100%;
+            }
+            
+            .api-key-display {
+                padding: 0.75rem;
+                word-break: break-all; /* Break long API keys */
+                font-size: 0.85rem;
+            }
+            
+            .usage-table {
+                font-size: 0.85rem;
+            }
+            
+            .usage-table th,
+            .usage-table td {
+                padding: 0.5rem;
             }
         }
         
@@ -439,24 +462,8 @@
     <!-- Skip to main content for screen readers -->
     <a href="#main-content" class="sr-only">Skip to main content</a>
     
-    <!-- Header -->
-    <header class="header" role="banner">
-        <nav class="nav" role="navigation" aria-label="Main navigation">
-            <a href="/pages/landing.html" class="logo" aria-label="PDF Service Home">PDF Service</a>
-            
-            <div class="nav-user">
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar" aria-hidden="true">U</div>
-                    <span class="user-name" id="userName">Loading...</span>
-                </div>
-                
-                <div class="card-actions">
-                    <a href="/pages/profile.html" class="btn btn-secondary" aria-label="View profile settings">Profile</a>
-                    <button class="btn btn-danger" id="logoutBtn" aria-label="Sign out of account">Sign Out</button>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <!-- Header Component - Will be inserted by header.js -->
+    <div id="header-container"></div>
     
     <!-- Main Content -->
     <main id="main-content" class="main" role="main">
@@ -592,7 +599,41 @@
     <script src="/js/validation.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/modal.js"></script>
+    <script src="/js/header.js"></script>
     <script src="/js/dashboard.js"></script>
+    <script>
+        // Initialize header component
+        document.addEventListener('DOMContentLoaded', function() {
+            const headerContainer = document.getElementById('header-container');
+            if (headerContainer) {
+                const header = HeaderComponent.create({
+                    actions: [
+                        { 
+                            text: 'Profile', 
+                            href: '/pages/profile.html', 
+                            class: 'btn-secondary',
+                            ariaLabel: 'View profile settings'
+                        },
+                        { 
+                            text: 'Sign Out', 
+                            id: 'logoutBtn', 
+                            class: 'btn-danger', 
+                            type: 'button',
+                            ariaLabel: 'Sign out of account'
+                        }
+                    ]
+                });
+                
+                headerContainer.appendChild(header);
+                
+                // Load user data
+                HeaderComponent.loadUserData();
+                
+                // Setup logout
+                HeaderComponent.setupLogout();
+            }
+        });
+    </script>
     <script>
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {

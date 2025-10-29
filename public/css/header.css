@@ -1,0 +1,291 @@
+/**
+ * Header Component Styles
+ * 
+ * Reusable styles for the header component across authenticated pages.
+ */
+
+/* Header */
+.header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #667eea;
+    text-decoration: none;
+}
+
+.logo:hover {
+    color: #5568d3;
+}
+
+/* User section - consistent across all pages */
+.header .nav-user,
+.header .nav-user-desktop,
+header .nav-user,
+header .nav-user-desktop {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem !important; /* Consistent spacing between user info and buttons */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: #667eea;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #333;
+}
+
+/* Header card-actions (no margin-top, consistent gap) */
+header .card-actions,
+.header .card-actions {
+    display: flex !important; /* Ensure flex display for gap to work */
+    margin-top: 0;
+    gap: 0.5rem !important; /* Consistent gap between buttons */
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Ensure all buttons in header have consistent sizing */
+header .card-actions .btn,
+.header .card-actions .btn,
+header .btn,
+.header .btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem !important;
+    min-height: 38px !important; /* Consistent height */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important; /* Prevent text wrapping */
+}
+
+/* Burger Menu Button */
+.burger-menu {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.burger-menu span {
+    display: block;
+    width: 24px;
+    height: 2.5px;
+    background: #333;
+    transition: all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border-radius: 2px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.burger-menu span:nth-child(1) {
+    top: 10px;
+}
+
+.burger-menu span:nth-child(2) {
+    top: 50%;
+    margin-top: -1.25px;
+}
+
+.burger-menu span:nth-child(3) {
+    bottom: 10px;
+}
+
+.burger-menu.active span:nth-child(1) {
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+}
+
+.burger-menu.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-50%) scaleX(0);
+}
+
+.burger-menu.active span:nth-child(3) {
+    bottom: auto;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%) rotate(-45deg);
+}
+
+/* Mobile Menu */
+.nav-menu-mobile {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    width: 100%;
+}
+
+.nav-menu-mobile.active {
+    display: flex;
+}
+
+.nav-menu-mobile .user-info {
+    justify-content: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 0.5rem;
+}
+
+.nav-menu-mobile .card-actions {
+    flex-direction: column;
+    width: 100%;
+}
+
+.nav-menu-mobile .card-actions .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Responsive - Desktop always visible, mobile hidden */
+.nav-user-desktop {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav {
+        padding: 1rem;
+        flex-wrap: nowrap; /* Prevent wrapping */
+        justify-content: space-between; /* Logo left, burger right */
+    }
+    
+    /* Show burger menu on mobile */
+    .burger-menu {
+        display: flex !important;
+    }
+    
+    /* Hide desktop nav-user on mobile - force hide all desktop elements */
+    .nav-user-desktop,
+    .header .nav-user-desktop,
+    header .nav-user-desktop {
+        display: none !important;
+    }
+    
+    /* Hide user info if it's outside nav-user-desktop */
+    .header .user-info:not(.nav-menu-mobile .user-info),
+    header .user-info:not(.nav-menu-mobile .user-info) {
+        display: none !important;
+    }
+    
+    /* Hide card-actions in desktop nav */
+    .nav-user-desktop .card-actions,
+    .header .nav-user-desktop .card-actions,
+    header .nav-user-desktop .card-actions {
+        display: none !important;
+    }
+    
+    /* Show mobile menu when active */
+    .nav-menu-mobile.active {
+        display: flex;
+    }
+    
+    .logo {
+        font-size: 1.25rem;
+    }
+    
+    /* Ensure logo and burger are the only visible items in nav */
+    .nav > .logo {
+        display: block !important;
+    }
+    
+    .nav > .burger-menu {
+        display: flex !important;
+    }
+    
+    /* Hide anything else in nav on mobile except logo and burger */
+    .nav > *:not(.logo):not(.burger-menu) {
+        display: none !important;
+    }
+}
+
+/* Extra small screens (Galaxy Fold, etc.) - 425px and below */
+@media (max-width: 425px) {
+    .nav {
+        padding: 0.75rem 0.75rem; /* Further reduced padding */
+    }
+    
+    .logo {
+        font-size: 1.1rem; /* Smaller logo on very small screens */
+    }
+    
+    .burger-menu {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .burger-menu span {
+        width: 20px;
+        height: 2px;
+    }
+    
+    .nav-menu-mobile {
+        padding: 0.75rem;
+    }
+    
+    .nav-menu-mobile .user-name {
+        font-size: 0.85rem;
+    }
+    
+    .nav-menu-mobile .card-actions .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 769px) {
+    /* Hide burger and mobile menu on desktop */
+    .burger-menu {
+        display: none !important;
+    }
+    
+    .nav-menu-mobile {
+        display: none !important;
+    }
+    
+    /* Show desktop nav-user */
+    .nav-user-desktop {
+        display: flex;
+    }
+}
+
