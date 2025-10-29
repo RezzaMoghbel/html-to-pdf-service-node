@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HTML2PDF Pro - Test UI</title>
     <link rel="stylesheet" href="../css/health-status.css" />
+    
+    <!-- API KEY SUPPORT - Added for authentication system -->
+    <meta name="csrf-token" content="">
+    <script src="../js/validation.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api-client.js"></script>
     <style>
       * {
         box-sizing: border-box;
@@ -61,6 +67,100 @@
 
       .back-button:hover {
         background-color: rgba(255, 255, 255, 0.3);
+      }
+
+      /* API KEY SUPPORT - Added for authentication system */
+      .api-key-section {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .api-key-section h3 {
+        margin: 0 0 15px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: white;
+      }
+
+      .api-key-input-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .api-key-input {
+        flex: 1;
+        min-width: 300px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.9rem;
+      }
+
+      .api-key-input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .api-key-input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.5);
+        background-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .api-key-btn {
+        padding: 12px 20px;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        white-space: nowrap;
+      }
+
+      .api-key-btn:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+      }
+
+      .api-key-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .api-key-status {
+        margin-top: 10px;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .api-key-status.valid {
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+        border: 1px solid rgba(40, 167, 69, 0.3);
+      }
+
+      .api-key-status.invalid {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+      }
+
+      .api-key-status.loading {
+        background-color: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        border: 1px solid rgba(255, 193, 7, 0.3);
       }
 
       .content {
@@ -741,6 +841,27 @@
         <a href="../pages/api-docs.html#html2pdf" class="back-button"
           >← Back to Documentation</a
         >
+        
+        <!-- API KEY SUPPORT - Added for authentication system -->
+        <div class="api-key-section">
+          <h3>🔑 API Key Authentication</h3>
+          <div class="api-key-input-group">
+            <input 
+              type="text" 
+              id="apiKeyInput" 
+              class="api-key-input" 
+              placeholder="Enter your API key (sk_live_...)"
+              autocomplete="off"
+            />
+            <button class="api-key-btn" onclick="validateApiKey()" id="validateBtn">
+              Validate Key
+            </button>
+            <button class="api-key-btn" onclick="clearApiKey()" id="clearBtn">
+              Clear
+            </button>
+          </div>
+          <div id="apiKeyStatus" class="api-key-status" style="display: none;"></div>
+        </div>
       </div>
 
       <div class="content">
@@ -2131,11 +2252,11 @@ Click "Generate JSON" to see the output...</pre
 
       // Function to reset all fields to defaults
       function resetToDefaults() {
-        if (
-          confirm(
-            "Are you sure you want to reset all fields to their default values? This will clear all your changes."
-          )
-        ) {
+        showConfirmationModal(
+          "Reset to Defaults",
+          "Are you sure you want to reset all fields to their default values? This will clear all your changes.",
+          function() {
+            // User confirmed
           // Reset global fields
           globalFields = {
             globalCSS: { isEditing: false, isSaved: false, originalValue: "" },
@@ -2184,7 +2305,9 @@ Click "Generate JSON" to see the output...</pre
 
           // Reinitialize with sample data
           initializeSampleData();
-        }
+          },
+          null  // onCancel
+        );
       }
 
       // Function to save all pages and escape their content
@@ -2399,6 +2522,11 @@ Click "Generate JSON" to see the output...</pre
       }
 
       async function generatePDF() {
+        // API KEY SUPPORT - Added for authentication system
+        if (!checkApiKeyRequirement()) {
+          return;
+        }
+        
         // Create loading overlay
         const loadingOverlay = document.createElement("div");
         loadingOverlay.className = "loading-overlay";
@@ -2427,11 +2555,20 @@ Click "Generate JSON" to see the output...</pre
             "Sending request to API...";
 
           // Send request to the bundle HTML to PDF endpoint
+          // API KEY SUPPORT - Added for authentication system
+          const apiKey = document.getElementById("apiKeyInput").value.trim();
+          const headers = {
+            "Content-Type": "application/json",
+          };
+          
+          // Add API key to headers if provided
+          if (apiKey) {
+            headers["X-API-Key"] = apiKey;
+          }
+          
           const response = await fetch("/api/v1/html2pdf/convert", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: headers,
             body: JSON.stringify(jsonData),
           });
 
@@ -2725,6 +2862,11 @@ Click "Generate JSON" to see the output...</pre
 
       // Preview button function - generates PDF for specific page
       async function openPreviewModal(pageId) {
+        // API KEY SUPPORT - Added for authentication system
+        if (!checkApiKeyRequirement()) {
+          return;
+        }
+        
         const page = pages.find((p) => p.id === pageId);
         if (!page) {
           showToast("error", "Error", "Page not found!");
@@ -2917,11 +3059,20 @@ Click "Generate JSON" to see the output...</pre
           };
 
           // Send request to the bundle HTML to PDF endpoint
+          // API KEY SUPPORT - Added for authentication system
+          const apiKey = document.getElementById("apiKeyInput").value.trim();
+          const headers = {
+            "Content-Type": "application/json",
+          };
+          
+          // Add API key to headers if provided
+          if (apiKey) {
+            headers["X-API-Key"] = apiKey;
+          }
+          
           const response = await fetch("/api/v1/html2pdf/convert", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: headers,
             body: JSON.stringify(jsonData),
           });
 
@@ -3055,7 +3206,143 @@ Click "Generate JSON" to see the output...</pre
         initializeSampleData();
         // Initialize SafeFrame controls state
         initializeSafeFrameControls();
+        
+        // API KEY SUPPORT - Added for authentication system
+        initializeApiKeySupport();
       });
+
+      // API KEY SUPPORT - Added for authentication system
+      function initializeApiKeySupport() {
+        // Check if API key is provided in URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const apiKeyFromUrl = urlParams.get('apiKey');
+        
+        if (apiKeyFromUrl) {
+          document.getElementById('apiKeyInput').value = apiKeyFromUrl;
+          validateApiKey();
+        }
+        
+        // Auto-validate API key on input
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        apiKeyInput.addEventListener('input', function() {
+          const value = this.value.trim();
+          if (value && value.startsWith('sk_live_') && value.length === 72) {
+            // Auto-validate if it looks like a valid API key
+            setTimeout(() => {
+              if (this.value.trim() === value) {
+                validateApiKey();
+              }
+            }, 1000);
+          } else {
+            clearApiKeyStatus();
+          }
+        });
+        
+        // Handle Enter key in API key input
+        apiKeyInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            validateApiKey();
+          }
+        });
+      }
+
+      async function validateApiKey() {
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const validateBtn = document.getElementById('validateBtn');
+        const statusDiv = document.getElementById('apiKeyStatus');
+        
+        const apiKey = apiKeyInput.value.trim();
+        
+        if (!apiKey) {
+          showApiKeyStatus('Please enter an API key', 'invalid');
+          return;
+        }
+        
+        // Basic format validation
+        // API key format: sk_live_ (8 chars) + 64 hex chars = 72 total
+        if (!apiKey.startsWith('sk_live_') || apiKey.length !== 72) {
+          showApiKeyStatus('Invalid API key format. Must start with "sk_live_" and be 72 characters long.', 'invalid');
+          return;
+        }
+        
+        // Show loading state
+        validateBtn.disabled = true;
+        validateBtn.textContent = 'Validating...';
+        showApiKeyStatus('Validating API key...', 'loading');
+        
+        try {
+          // Test API key by making a request to dashboard
+          const response = await fetch('/dashboard/api-key', {
+            method: 'GET',
+            headers: {
+              'X-API-Key': apiKey,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+              showApiKeyStatus('✅ API key is valid and active', 'valid');
+              apiKeyInput.style.borderColor = 'rgba(40, 167, 69, 0.5)';
+            } else {
+              showApiKeyStatus('❌ API key validation failed', 'invalid');
+              apiKeyInput.style.borderColor = 'rgba(220, 53, 69, 0.5)';
+            }
+          } else if (response.status === 401) {
+            showApiKeyStatus('❌ Invalid API key', 'invalid');
+            apiKeyInput.style.borderColor = 'rgba(220, 53, 69, 0.5)';
+          } else if (response.status === 403) {
+            showApiKeyStatus('❌ API key is blocked or inactive', 'invalid');
+            apiKeyInput.style.borderColor = 'rgba(220, 53, 69, 0.5)';
+          } else {
+            showApiKeyStatus('❌ API key validation failed', 'invalid');
+            apiKeyInput.style.borderColor = 'rgba(220, 53, 69, 0.5)';
+          }
+        } catch (error) {
+          console.error('API key validation error:', error);
+          showApiKeyStatus('❌ Network error during validation', 'invalid');
+          apiKeyInput.style.borderColor = 'rgba(220, 53, 69, 0.5)';
+        } finally {
+          validateBtn.disabled = false;
+          validateBtn.textContent = 'Validate Key';
+        }
+      }
+
+      function clearApiKey() {
+        document.getElementById('apiKeyInput').value = '';
+        clearApiKeyStatus();
+        document.getElementById('apiKeyInput').style.borderColor = '';
+      }
+
+      function showApiKeyStatus(message, type) {
+        const statusDiv = document.getElementById('apiKeyStatus');
+        statusDiv.textContent = message;
+        statusDiv.className = `api-key-status ${type}`;
+        statusDiv.style.display = 'block';
+      }
+
+      function clearApiKeyStatus() {
+        const statusDiv = document.getElementById('apiKeyStatus');
+        statusDiv.style.display = 'none';
+        statusDiv.textContent = '';
+        statusDiv.className = 'api-key-status';
+      }
+
+      // Check if API key is required for PDF generation
+      function checkApiKeyRequirement() {
+        const apiKey = document.getElementById('apiKeyInput').value.trim();
+        if (!apiKey) {
+          showToast(
+            'error',
+            'API Key Required',
+            'Please enter your API key to generate PDFs. You can get your API key from the dashboard.',
+            8000
+          );
+          return false;
+        }
+        return true;
+      }
 
       // Initialize SafeFrame controls based on current state
       function initializeSafeFrameControls() {

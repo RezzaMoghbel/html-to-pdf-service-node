@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - PDF Service</title>
+    <meta name="description" content="Manage your PDF Service profile settings and account information.">
+    <meta name="csrf-token" content="">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- CSS Reset and Base Styles -->
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Base Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #5a6fd8;
+        }
+        
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        /* Password Requirements */
+        .password-requirements {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .password-requirements h4 {
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .password-requirements ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .password-requirements li {
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .password-requirements li::before {
+            content: "✗";
+            color: #e74c3c;
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .password-requirements li.valid::before {
+            content: "✓";
+            color: #27ae60;
+        }
+        
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-bottom: 2px solid transparent;
+            position: relative;
+        }
+        
+        .form-header:hover {
+            background: #f8f9fa;
+        }
+        
+        .form-card.active .form-header {
+            border-bottom-color: #667eea;
+            background: #f8f9fa;
+        }
+        
+        .form-header-content {
+            flex: 1;
+        }
+        
+        .form-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .form-header-icon {
+            font-size: 1.5rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+            margin-left: 1rem;
+        }
+        
+        .form-card.active .form-header-icon {
+            transform: rotate(180deg);
+        }
+        
+        .form-content {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 2rem;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .form-card.active .form-content {
+            max-height: 5000px;
+            padding: 2rem;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group input.error {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+        
+        .form-group input.success {
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .success-message {
+            color: #27ae60;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            /*margin-top: 2rem;*/
+            flex-wrap: wrap;
+        }
+        
+        .form-actions .btn {
+            margin-bottom: 0;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        .loading-spinner-large {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e9ecef;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+        
+        /* Error States */
+        .error-message-large {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success-message-large {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #c3e6cb;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-user {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-header {
+                padding: 1rem 1.5rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .form-header-icon {
+                position: absolute;
+                top: 1rem;
+                right: 1.5rem;
+                margin-left: 0;
+            }
+            
+            .form-content {
+                padding: 0 1.5rem;
+            }
+            
+            .form-card.active .form-content {
+                padding: 1.5rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+        
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* Focus styles for keyboard navigation */
+        .btn:focus,
+        input:focus,
+        select:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .form-card {
+                border: 2px solid #000;
+            }
+            
+            .btn-primary {
+                background: #000;
+                color: #fff;
+            }
+            
+            .btn-secondary {
+                border-color: #000;
+                color: #000;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content for screen readers -->
+    <a href="#main-content" class="sr-only">Skip to main content</a>
+    
+    <!-- Header -->
+    <header class="header" role="banner">
+        <nav class="nav" role="navigation" aria-label="Main navigation">
+            <a href="/pages/landing.html" class="logo" aria-label="PDF Service Home">PDF Service</a>
+            
+            <div class="nav-user">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar" aria-hidden="true">U</div>
+                    <span class="user-name" id="userName">Loading...</span>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="/pages/dashboard.html" class="btn btn-secondary" aria-label="Go back to dashboard">Dashboard</a>
+                    <button class="btn btn-danger" id="logoutBtn" aria-label="Sign out of account">Sign Out</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main id="main-content" class="main" role="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Profile Settings</h1>
+                <p>Manage your account information and preferences</p>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loadingState" class="loading">
+                <div class="loading-spinner-large"></div>
+                <span>Loading profile...</span>
+            </div>
+            
+            <!-- Error State -->
+            <div id="errorState" class="error-message-large" style="display: none;">
+                <strong>Error:</strong> <span id="errorMessage"></span>
+            </div>
+            
+            <!-- Profile Content -->
+            <div id="profileContent" style="display: none;">
+                <!-- Profile Information Form -->
+                <div class="form-card">
+                    <div class="form-header" onclick="toggleAccordion(this)">
+                        <div class="form-header-content">
+                            <h2>Profile Information</h2>
+                            <p>Update your personal information and contact details</p>
+                        </div>
+                        <span class="form-header-icon">▼</span>
+                    </div>
+                    <div class="form-content">
+                    
+                    <form id="profileForm" novalidate aria-label="Profile update form">
+                        <!-- First Name -->
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                name="firstName" 
+                                required 
+                                autocomplete="given-name"
+                                aria-describedby="firstName-error"
+                                aria-invalid="false"
+                            >
+                            <div id="firstName-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <!-- Last Name -->
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                name="lastName" 
+                                required 
+                                autocomplete="family-name"
+                                aria-describedby="lastName-error"
+                                aria-invalid="false"
+                            >
+                            <div id="lastName-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <!-- Email (Read-only) -->
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                readonly
+                                style="background: #f8f9fa; color: #666;"
+                                aria-describedby="email-help"
+                            >
+                            <div id="email-help" class="sr-only">Email address cannot be changed</div>
+                        </div>
+                        
+                        <!-- Date of Birth -->
+                        <div class="form-group">
+                            <label for="dateOfBirth">Date of Birth *</label>
+                            <input 
+                                type="text" 
+                                id="dateOfBirth" 
+                                name="dateOfBirth" 
+                                required 
+                                placeholder="DD/MM/YYYY"
+                                autocomplete="bday"
+                                aria-describedby="dateOfBirth-error dateOfBirth-help"
+                                aria-invalid="false"
+                            >
+                            <div id="dateOfBirth-error" class="error-message" role="alert"></div>
+                            <div id="dateOfBirth-help" class="sr-only">Enter your date of birth in DD/MM/YYYY format</div>
+                        </div>
+                        
+                        <!-- Address -->
+                        <div class="form-group">
+                            <label for="address1">Address Line 1 *</label>
+                            <input 
+                                type="text" 
+                                id="address1" 
+                                name="address1" 
+                                required 
+                                autocomplete="address-line1"
+                                aria-describedby="address1-error"
+                                aria-invalid="false"
+                            >
+                            <div id="address1-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address2">Address Line 2</label>
+                            <input 
+                                type="text" 
+                                id="address2" 
+                                name="address2" 
+                                autocomplete="address-line2"
+                                aria-describedby="address2-error"
+                            >
+                            <div id="address2-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <!-- City -->
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <input 
+                                type="text" 
+                                id="city" 
+                                name="city" 
+                                required 
+                                autocomplete="address-level2"
+                                aria-describedby="city-error"
+                                aria-invalid="false"
+                            >
+                            <div id="city-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <!-- Postcode -->
+                        <div class="form-group">
+                            <label for="postcode">Postcode *</label>
+                            <input 
+                                type="text" 
+                                id="postcode" 
+                                name="postcode" 
+                                required 
+                                autocomplete="postal-code"
+                                aria-describedby="postcode-error"
+                                aria-invalid="false"
+                            >
+                            <div id="postcode-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <!-- Country -->
+                        <div class="form-group">
+                            <label for="country">Country *</label>
+                            <select 
+                                id="country" 
+                                name="country" 
+                                required 
+                                autocomplete="country"
+                                aria-describedby="country-error"
+                                aria-invalid="false"
+                            >
+                                <option value="">Select Country</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="United States">United States</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Germany">Germany</option>
+                                <option value="France">France</option>
+                                <option value="Spain">Spain</option>
+                                <option value="Italy">Italy</option>
+                                <option value="Netherlands">Netherlands</option>
+                                <option value="Sweden">Sweden</option>
+                                <option value="Norway">Norway</option>
+                                <option value="Denmark">Denmark</option>
+                            </select>
+                            <div id="country-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="saveProfileBtn" disabled>
+                                <span class="loading-spinner"></span>
+                                <span class="btn-text">Save Changes</span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="cancelBtn" disabled>
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                
+                <!-- Password Change Form -->
+                <div class="form-card">
+                    <div class="form-header" onclick="toggleAccordion(this)">
+                        <div class="form-header-content">
+                            <h2>Change Password</h2>
+                            <p>Update your account password for better security</p>
+                        </div>
+                        <span class="form-header-icon">▼</span>
+                    </div>
+                    <div class="form-content">
+                    
+                    <form id="passwordForm" novalidate aria-label="Password change form">
+                        <!-- Current Password -->
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password *</label>
+                            <input 
+                                type="password" 
+                                id="currentPassword" 
+                                name="currentPassword" 
+                                required 
+                                autocomplete="off"
+                                aria-describedby="currentPassword-error"
+                                aria-invalid="false"
+                            >
+                            <div id="currentPassword-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <!-- New Password -->
+                        <div class="form-group">
+                            <label for="newPassword">New Password *</label>
+                            <input 
+                                type="password" 
+                                id="newPassword" 
+                                name="newPassword" 
+                                required 
+                                autocomplete="off"
+                                aria-describedby="newPassword-error password-requirements"
+                                aria-invalid="false"
+                            >
+                            <div id="newPassword-error" class="error-message" role="alert"></div>
+                            <div id="password-requirements" class="password-requirements" style="display: none;">
+                                <h4>Password Requirements:</h4>
+                                <ul>
+                                    <li id="req-length">At least 8 characters</li>
+                                    <li id="req-uppercase">One uppercase letter</li>
+                                    <li id="req-lowercase">One lowercase letter</li>
+                                    <li id="req-number">One number</li>
+                                    <li id="req-special">One special character</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Confirm New Password -->
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirm New Password *</label>
+                            <input 
+                                type="password" 
+                                id="confirmNewPassword" 
+                                name="confirmNewPassword" 
+                                required 
+                                autocomplete="off"
+                                aria-describedby="confirmNewPassword-error"
+                                aria-invalid="false"
+                            >
+                            <div id="confirmNewPassword-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="changePasswordBtn" disabled>
+                                <span class="loading-spinner"></span>
+                                <span class="btn-text">Change Password</span>
+                            </button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                
+                <!-- Account Actions -->
+                <div class="form-card">
+                    <div class="form-header" onclick="toggleAccordion(this)">
+                        <div class="form-header-content">
+                            <h2>Account Actions</h2>
+                            <p>Manage your account settings and data</p>
+                        </div>
+                        <span class="form-header-icon">▼</span>
+                    </div>
+                    <div class="form-content">
+                        <div class="form-actions">
+                            <button class="btn btn-danger" id="deleteAccountBtn" aria-label="Delete account permanently">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript -->
+    <script src="/js/validation.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/modal.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script>
+        // Accordion toggle function
+        function toggleAccordion(element) {
+            const formCard = element.closest('.form-card');
+            const isActive = formCard.classList.contains('active');
+            
+            // Remove active class from all cards
+            document.querySelectorAll('.form-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // If this card wasn't active, make it active
+            if (!isActive) {
+                formCard.classList.add('active');
+            }
+        }
+        
+        // Initialize profile page
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const profileContent = document.getElementById('profileContent');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            let originalProfileData = null;
+            
+            // CSRF token initialization
+            async function initializeCSRFToken() {
+                try {
+                    const response = await fetch('/auth/session', {
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.data.csrfToken) {
+                            const metaTag = document.querySelector('meta[name="csrf-token"]');
+                            if (metaTag) {
+                                metaTag.setAttribute('content', data.data.csrfToken);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Failed to initialize CSRF token:', error);
+                }
+            }
+            
+            // Validation functions
+            function validateProfileFormDetailed(data) {
+                let isValid = true;
+                
+                // Clear all errors first
+                clearFieldError('firstName');
+                clearFieldError('lastName');
+                clearFieldError('dateOfBirth');
+                clearFieldError('address1');
+                clearFieldError('address2');
+                clearFieldError('city');
+                clearFieldError('postcode');
+                clearFieldError('country');
+                
+                if (!data.profile) {
+                    showErrorMessage('Profile data is missing');
+                    return false;
+                }
+                
+                const p = data.profile;
+                const a = data.profile.address || {};
+                
+                // Validate first name
+                if (!p.firstName || p.firstName.trim().length === 0) {
+                    showFieldError('firstName', 'First name is required');
+                    isValid = false;
+                } else if (p.firstName.trim().length < 1 || p.firstName.trim().length > 50) {
+                    showFieldError('firstName', 'First name must be between 1 and 50 characters');
+                    isValid = false;
+                }
+                
+                // Validate last name
+                if (!p.lastName || p.lastName.trim().length === 0) {
+                    showFieldError('lastName', 'Last name is required');
+                    isValid = false;
+                } else if (p.lastName.trim().length < 1 || p.lastName.trim().length > 50) {
+                    showFieldError('lastName', 'Last name must be between 1 and 50 characters');
+                    isValid = false;
+                }
+                
+                // Validate date of birth
+                if (!p.dob || p.dob.trim().length === 0) {
+                    showFieldError('dateOfBirth', 'Date of birth is required');
+                    isValid = false;
+                } else if (!p.dob.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                    showFieldError('dateOfBirth', 'Date of birth must be in DD/MM/YYYY format');
+                    isValid = false;
+                }
+                
+                // Validate address line 1
+                if (!a.address1 || a.address1.trim().length === 0) {
+                    showFieldError('address1', 'Address line 1 is required');
+                    isValid = false;
+                } else if (a.address1.trim().length < 1 || a.address1.trim().length > 100) {
+                    showFieldError('address1', 'Address must be between 1 and 100 characters');
+                    isValid = false;
+                }
+                
+                // Validate city
+                if (!a.city || a.city.trim().length === 0) {
+                    showFieldError('city', 'City is required');
+                    isValid = false;
+                } else if (a.city.trim().length < 1 || a.city.trim().length > 50) {
+                    showFieldError('city', 'City must be between 1 and 50 characters');
+                    isValid = false;
+                }
+                
+                // Validate postcode
+                if (!a.postcode || a.postcode.trim().length === 0) {
+                    showFieldError('postcode', 'Postcode is required');
+                    isValid = false;
+                } else if (a.postcode.trim().length < 1 || a.postcode.trim().length > 20) {
+                    showFieldError('postcode', 'Postcode must be between 1 and 20 characters');
+                    isValid = false;
+                }
+                
+                // Validate country
+                if (!a.country || a.country.trim().length === 0) {
+                    showFieldError('country', 'Country is required');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            // Keep the simple version for backward compatibility
+            function validateProfileForm(data) {
+                if (!data.profile) return false;
+                
+                const p = data.profile;
+                const a = data.profile.address || {};
+                
+                // Basic validation
+                if (!p.firstName || p.firstName.trim().length === 0) return false;
+                if (!p.lastName || p.lastName.trim().length === 0) return false;
+                if (!p.dob || !p.dob.match(/^\d{2}\/\d{2}\/\d{4}$/)) return false;
+                if (!a.address1 || a.address1.trim().length === 0) return false;
+                if (!a.city || a.city.trim().length === 0) return false;
+                if (!a.postcode || a.postcode.trim().length === 0) return false;
+                if (!a.country || a.country.trim().length === 0) return false;
+                
+                return true;
+            }
+            
+            function validatePasswordChangeForm(data) {
+                if (!data.currentPassword || data.currentPassword.length === 0) return false;
+                if (!data.newPassword || data.newPassword.length < 8) return false;
+                if (data.newPassword !== data.confirmPassword) return false;
+                
+                return true;
+            }
+            
+            // Helper function to get CSRF token
+            function getCSRFToken() {
+                const metaTag = document.querySelector('meta[name="csrf-token"]');
+                return metaTag ? metaTag.getAttribute('content') : null;
+            }
+            
+            // Check authentication and load profile
+            async function initializeProfile() {
+                // Clear password fields to ensure they're empty on load
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmNewPassword').value = '';
+                try {
+                    // Check if user is logged in
+                    const response = await fetch('/auth/session', {
+                        credentials: 'include'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Not authenticated');
+                    }
+                    
+                    const result = await response.json();
+                    if (!result.success) {
+                        throw new Error('Session invalid');
+                    }
+                    
+                    // Load profile data
+                    await loadProfileData();
+                    
+                    // Show profile content
+                    loadingState.style.display = 'none';
+                    profileContent.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Profile initialization error:', error);
+                    showError('Authentication required. Redirecting to login...');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/pages/login.html';
+                    }, 2000);
+                }
+            }
+            
+            async function loadProfileData() {
+                try {
+                    const response = await fetch('/dashboard/profile', {
+                        credentials: 'include'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to load profile');
+                    }
+                    
+                    const result = await response.json();
+                    if (!result.success) {
+                        throw new Error(result.message || 'Failed to load profile');
+                    }
+                    
+                    const user = result.data.user;
+                    originalProfileData = { ...user };
+                    
+                    // Update user info in header
+                    updateUserInfo(user);
+                    
+                    // Populate form fields
+                    populateForm(user);
+                    
+                } catch (error) {
+                    console.error('Error loading profile data:', error);
+                    showError('Failed to load profile data. Please refresh the page.');
+                }
+            }
+            
+            function updateUserInfo(user) {
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                // Check if profile exists and has required fields
+                if (!user.profile || !user.profile.firstName) {
+                    console.error('User profile data is incomplete:', user);
+                    userName.textContent = 'User';
+                    userAvatar.textContent = 'U';
+                    return;
+                }
+                
+                userName.textContent = `${user.profile.firstName} ${user.profile.lastName}`;
+                userAvatar.textContent = user.profile.firstName.charAt(0).toUpperCase();
+            }
+            
+            function populateForm(user) {
+                // Check if profile exists
+                if (!user.profile) {
+                    console.error('User profile data is incomplete:', user);
+                    return;
+                }
+                
+                // Profile form fields
+                document.getElementById('firstName').value = user.profile.firstName || '';
+                document.getElementById('lastName').value = user.profile.lastName || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('dateOfBirth').value = user.profile.dob || user.profile.dateOfBirth || '';
+                document.getElementById('address1').value = user.profile.address?.address1 || '';
+                document.getElementById('address2').value = user.profile.address?.address2 || '';
+                document.getElementById('city').value = user.profile.address?.city || '';
+                document.getElementById('postcode').value = user.profile.address?.postcode || '';
+                document.getElementById('country').value = user.profile.address?.country || '';
+                
+                // Update button states after populating form
+                updateButtonStates();
+            }
+            
+            // Get current form data
+            function getCurrentFormData() {
+                return {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    dob: document.getElementById('dateOfBirth').value.trim(),
+                    address1: document.getElementById('address1').value.trim(),
+                    address2: document.getElementById('address2').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    postcode: document.getElementById('postcode').value.trim(),
+                    country: document.getElementById('country').value.trim()
+                };
+            }
+            
+            // Check if form data has changed
+            function hasFormDataChanged() {
+                if (!originalProfileData) {
+                    return false;
+                }
+                
+                const current = getCurrentFormData();
+                const original = originalProfileData.profile || {};
+                const originalAddr = originalProfileData.profile?.address || {};
+                
+                return (
+                    current.firstName !== (original.firstName || '') ||
+                    current.lastName !== (original.lastName || '') ||
+                    current.dob !== (original.dob || original.dateOfBirth || '') ||
+                    current.address1 !== (originalAddr.address1 || '') ||
+                    current.address2 !== (originalAddr.address2 || '') ||
+                    current.city !== (originalAddr.city || '') ||
+                    current.postcode !== (originalAddr.postcode || '') ||
+                    current.country !== (originalAddr.country || '')
+                );
+            }
+            
+            // Update Save and Cancel button states
+            function updateButtonStates() {
+                const hasChanged = hasFormDataChanged();
+                const saveBtn = document.getElementById('saveProfileBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+                
+                if (saveBtn) {
+                    saveBtn.disabled = !hasChanged;
+                    if (!hasChanged) {
+                        saveBtn.style.opacity = '0.5';
+                        saveBtn.style.cursor = 'not-allowed';
+                    } else {
+                        saveBtn.style.opacity = '1';
+                        saveBtn.style.cursor = 'pointer';
+                    }
+                }
+                
+                if (cancelBtn) {
+                    cancelBtn.disabled = !hasChanged;
+                    if (!hasChanged) {
+                        cancelBtn.style.opacity = '0.5';
+                        cancelBtn.style.cursor = 'not-allowed';
+                    } else {
+                        cancelBtn.style.opacity = '1';
+                        cancelBtn.style.cursor = 'pointer';
+                    }
+                }
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorState.style.display = 'block';
+                loadingState.style.display = 'none';
+            }
+            
+            // Profile form submission
+            document.getElementById('profileForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    await showConfirmModal({
+                        title: 'Save Changes',
+                        message: 'Are you sure you want to save these changes to your profile?',
+                        confirmText: 'Yes, Save',
+                        cancelText: 'Cancel',
+                        danger: false,
+                        onConfirm: async () => {
+                            await performProfileSave();
+                        }
+                    });
+                } catch (error) {
+                    // User cancelled
+                }
+            });
+            
+            async function performProfileSave() {
+                const saveBtn = document.getElementById('saveProfileBtn');
+                const loadingSpinner = saveBtn.querySelector('.loading-spinner');
+                const btnText = saveBtn.querySelector('.btn-text');
+                
+                // Show loading state
+                saveBtn.disabled = true;
+                loadingSpinner.style.display = 'inline-block';
+                btnText.textContent = 'Saving...';
+                
+                try {
+                    const form = document.getElementById('profileForm');
+                    const formData = new FormData(form);
+                    const profileData = {
+                        profile: {
+                            firstName: formData.get('firstName'),
+                            lastName: formData.get('lastName'),
+                            dob: formData.get('dateOfBirth'),
+                            address: {
+                                address1: formData.get('address1'),
+                                address2: formData.get('address2'),
+                                city: formData.get('city'),
+                                postcode: formData.get('postcode'),
+                                country: formData.get('country')
+                            }
+                        }
+                    };
+                    
+                    // Validate form with detailed error messages
+                    if (!validateProfileFormDetailed(profileData)) {
+                        // Reset button state
+                        saveBtn.disabled = false;
+                        loadingSpinner.style.display = 'none';
+                        btnText.textContent = 'Save Changes';
+                        return;
+                    }
+                    
+                    console.log("DEBUG: profile.html - Sending profile data:", JSON.stringify(profileData, null, 2));
+                    
+                    // Get CSRF token
+                    const csrfToken = getCSRFToken();
+                    const headers = {
+                        'Content-Type': 'application/json',
+                    };
+                    
+                    if (csrfToken) {
+                        headers['X-CSRF-Token'] = csrfToken;
+                    }
+                    
+                    // Submit profile update
+                    console.log("DEBUG: profile.html - Making PUT request to /dashboard/profile");
+                    const response = await fetch('/dashboard/profile', {
+                        method: 'PUT',
+                        headers: headers,
+                        credentials: 'include',
+                        body: JSON.stringify(profileData)
+                    });
+                    
+                    console.log("DEBUG: profile.html - Response status:", response.status);
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showSuccessMessage('Profile updated successfully!');
+                        originalProfileData = { ...result.data.user };
+                        updateButtonStates(); // Update buttons after successful save
+                    } else {
+                        throw new Error(result.message || 'Profile update failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('Profile update error:', error);
+                    showErrorMessage(error.message || 'Failed to update profile. Please try again.');
+                } finally {
+                    // Reset button state
+                    saveBtn.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                    btnText.textContent = 'Save Changes';
+                }
+            }
+            
+            // Helper functions for password form validation
+            function showFieldError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                const errorDiv = document.getElementById(`${fieldId}-error`);
+                if (field && errorDiv) {
+                    field.setAttribute('aria-invalid', 'true');
+                    errorDiv.textContent = message;
+                    errorDiv.style.display = 'block';
+                }
+            }
+            
+            function clearFieldError(fieldId) {
+                const field = document.getElementById(fieldId);
+                const errorDiv = document.getElementById(`${fieldId}-error`);
+                if (field && errorDiv) {
+                    field.setAttribute('aria-invalid', 'false');
+                    errorDiv.textContent = '';
+                    errorDiv.style.display = 'none';
+                }
+            }
+            
+            // Validate password change form with detailed error messages
+            function validatePasswordChangeFormDetailed(data) {
+                let isValid = true;
+                
+                // Clear all errors first
+                clearFieldError('currentPassword');
+                clearFieldError('newPassword');
+                clearFieldError('confirmNewPassword');
+                
+                // Check current password
+                if (!data.currentPassword || data.currentPassword.length === 0) {
+                    showFieldError('currentPassword', 'Current password is required');
+                    isValid = false;
+                }
+                
+                // Check new password
+                if (!data.newPassword || data.newPassword.length === 0) {
+                    showFieldError('newPassword', 'New password is required');
+                    isValid = false;
+                } else if (data.newPassword.length < 8) {
+                    showFieldError('newPassword', 'New password must be at least 8 characters long');
+                    isValid = false;
+                }
+                
+                // Check confirm password
+                if (!data.confirmPassword || data.confirmPassword.length === 0) {
+                    showFieldError('confirmNewPassword', 'Please confirm your new password');
+                    isValid = false;
+                } else if (data.newPassword !== data.confirmPassword) {
+                    showFieldError('confirmNewPassword', 'Passwords do not match');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            // Password form submission
+            document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    await showConfirmModal({
+                        title: 'Change Password',
+                        message: 'Are you sure you want to change your password?',
+                        confirmText: 'Yes, Change',
+                        cancelText: 'Cancel',
+                        danger: false,
+                        onConfirm: async () => {
+                            await performPasswordChange();
+                        }
+                    });
+                } catch (error) {
+                    // User cancelled
+                }
+            });
+            
+            async function performPasswordChange() {
+                const changeBtn = document.getElementById('changePasswordBtn');
+                const loadingSpinner = changeBtn.querySelector('.loading-spinner');
+                const btnText = changeBtn.querySelector('.btn-text');
+                
+                // Show loading state
+                changeBtn.disabled = true;
+                loadingSpinner.style.display = 'inline-block';
+                btnText.textContent = 'Changing...';
+                
+                try {
+                    const form = document.getElementById('passwordForm');
+                    const formData = new FormData(form);
+                    const passwordData = {
+                        currentPassword: formData.get('currentPassword'),
+                        newPassword: formData.get('newPassword'),
+                        confirmPassword: formData.get('confirmNewPassword')
+                    };
+                    
+                    // Validate form with detailed error messages
+                    if (!validatePasswordChangeFormDetailed(passwordData)) {
+                        // Clear loading state
+                        changeBtn.disabled = false;
+                        loadingSpinner.style.display = 'none';
+                        btnText.textContent = 'Change Password';
+                        return;
+                    }
+                    
+                    // Get CSRF token
+                    const csrfToken = getCSRFToken();
+                    const headers = {
+                        'Content-Type': 'application/json',
+                    };
+                    
+                    if (csrfToken) {
+                        headers['X-CSRF-Token'] = csrfToken;
+                    }
+                    
+                    // Submit password change
+                    const response = await fetch('/auth/change-password', {
+                        method: 'POST',
+                        headers: headers,
+                        credentials: 'include',
+                        body: JSON.stringify(passwordData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showSuccessMessage('Password changed successfully!');
+                        this.reset();
+                        // Clear all field errors
+                        clearFieldError('currentPassword');
+                        clearFieldError('newPassword');
+                        clearFieldError('confirmNewPassword');
+                    } else {
+                        // Check if it's an incorrect current password error
+                        if (result.message && result.message.includes('current password')) {
+                            showFieldError('currentPassword', 'The current password you entered is incorrect');
+                        } else {
+                            throw new Error(result.message || 'Password change failed');
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Password change error:', error);
+                    // Check if it's a validation error that we can show per field
+                    const errorMessage = error.message || 'Failed to change password. Please try again.';
+                    if (errorMessage.includes('current password')) {
+                        showFieldError('currentPassword', 'The current password you entered is incorrect');
+                    } else {
+                        showErrorMessage(errorMessage);
+                    }
+                } finally {
+                    // Reset button state
+                    changeBtn.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                    btnText.textContent = 'Change Password';
+                }
+            }
+            
+            // Add real-time validation for profile fields
+            document.getElementById('firstName').addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value.length === 0) {
+                    showFieldError('firstName', 'First name is required');
+                } else if (value.length > 50) {
+                    showFieldError('firstName', 'First name must be less than 50 characters');
+                } else {
+                    clearFieldError('firstName');
+                }
+            });
+            
+            document.getElementById('lastName').addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value.length === 0) {
+                    showFieldError('lastName', 'Last name is required');
+                } else if (value.length > 50) {
+                    showFieldError('lastName', 'Last name must be less than 50 characters');
+                } else {
+                    clearFieldError('lastName');
+                }
+            });
+            
+            document.getElementById('dateOfBirth').addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value.length === 0) {
+                    showFieldError('dateOfBirth', 'Date of birth is required');
+                } else if (!value.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                    showFieldError('dateOfBirth', 'Date of birth must be in DD/MM/YYYY format');
+                } else {
+                    clearFieldError('dateOfBirth');
+                }
+            });
+            
+            document.getElementById('address1').addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value.length === 0) {
+                    showFieldError('address1', 'Address line 1 is required');
+                } else if (value.length > 100) {
+                    showFieldError('address1', 'Address must be less than 100 characters');
+                } else {
+                    clearFieldError('address1');
+                }
+            });
+            
+            document.getElementById('city').addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value.length === 0) {
+                    showFieldError('city', 'City is required');
+                } else if (value.length > 50) {
+                    showFieldError('city', 'City must be less than 50 characters');
+                } else {
+                    clearFieldError('city');
+                }
+            });
+            
+            document.getElementById('postcode').addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value.length === 0) {
+                    showFieldError('postcode', 'Postcode is required');
+                } else if (value.length > 20) {
+                    showFieldError('postcode', 'Postcode must be less than 20 characters');
+                } else {
+                    clearFieldError('postcode');
+                }
+            });
+            
+            document.getElementById('country').addEventListener('change', function() {
+                const value = this.value.trim();
+                if (value.length === 0) {
+                    showFieldError('country', 'Country is required');
+                } else {
+                    clearFieldError('country');
+                }
+            });
+            
+            // Clear errors on input for profile fields and update button states
+            ['firstName', 'lastName', 'dateOfBirth', 'address1', 'address2', 'city', 'postcode', 'country'].forEach(fieldId => {
+                document.getElementById(fieldId).addEventListener('input', function() {
+                    clearFieldError(fieldId);
+                    updateButtonStates();
+                });
+                document.getElementById(fieldId).addEventListener('change', function() {
+                    updateButtonStates();
+                });
+            });
+            
+            // Password strength validation
+            const newPasswordInput = document.getElementById('newPassword');
+            const passwordRequirements = document.getElementById('password-requirements');
+            
+            function validatePasswordRequirements(password) {
+                const requirements = {
+                    length: password.length >= 8,
+                    uppercase: /[A-Z]/.test(password),
+                    lowercase: /[a-z]/.test(password),
+                    number: /\d/.test(password),
+                    special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                };
+                
+                // Update requirement indicators
+                document.getElementById('req-length').classList.toggle('valid', requirements.length);
+                document.getElementById('req-uppercase').classList.toggle('valid', requirements.uppercase);
+                document.getElementById('req-lowercase').classList.toggle('valid', requirements.lowercase);
+                document.getElementById('req-number').classList.toggle('valid', requirements.number);
+                document.getElementById('req-special').classList.toggle('valid', requirements.special);
+                
+                return Object.values(requirements).every(req => req === true);
+            }
+            
+            // Show password requirements on focus
+            newPasswordInput.addEventListener('focus', function() {
+                passwordRequirements.style.display = 'block';
+            });
+            
+            // Validate password requirements in real-time
+            newPasswordInput.addEventListener('input', function() {
+                const password = this.value;
+                validatePasswordRequirements(password);
+                updatePasswordButtonState();
+                clearFieldError('newPassword');
+            });
+            
+            // Validate password match on confirm field
+            document.getElementById('confirmNewPassword').addEventListener('input', function() {
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = this.value;
+                updatePasswordButtonState();
+                clearFieldError('confirmNewPassword');
+            });
+            
+            // Track current password changes
+            document.getElementById('currentPassword').addEventListener('input', function() {
+                updatePasswordButtonState();
+                clearFieldError('currentPassword');
+            });
+            
+            // Update Change Password button state
+            function updatePasswordButtonState() {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = document.getElementById('confirmNewPassword').value;
+                const changeBtn = document.getElementById('changePasswordBtn');
+                
+                // Check if all three passwords are the same
+                const allSame = currentPassword && 
+                               newPassword && 
+                               confirmPassword && 
+                               currentPassword === newPassword && 
+                               newPassword === confirmPassword;
+                
+                if (allSame) {
+                    changeBtn.disabled = true;
+                    changeBtn.style.opacity = '0.5';
+                    changeBtn.style.cursor = 'not-allowed';
+                } else {
+                    changeBtn.disabled = false;
+                    changeBtn.style.opacity = '1';
+                    changeBtn.style.cursor = 'pointer';
+                }
+            }
+            
+            // Clear errors on blur for password fields
+            ['currentPassword', 'newPassword', 'confirmNewPassword'].forEach(fieldId => {
+                document.getElementById(fieldId).addEventListener('blur', function() {
+                    clearFieldError(fieldId);
+                });
+            });
+            
+            // Cancel button
+            document.getElementById('cancelBtn').addEventListener('click', async function() {
+                try {
+                    await showConfirmModal({
+                        title: 'Discard Changes',
+                        message: 'Are you sure you want to discard your changes? All unsaved modifications will be lost.',
+                        confirmText: 'Yes, Discard',
+                        cancelText: 'Keep Editing',
+                        danger: false,
+                        onConfirm: () => {
+                            // Clear all validation errors
+                            ['firstName', 'lastName', 'dateOfBirth', 'address1', 'address2', 'city', 'postcode', 'country'].forEach(fieldId => {
+                                clearFieldError(fieldId);
+                            });
+                            
+                            // Restore original data
+                            if (originalProfileData) {
+                                populateForm(originalProfileData);
+                            }
+                            // updateButtonStates is called in populateForm, but calling it here to be safe
+                            updateButtonStates();
+                        }
+                    });
+                } catch (error) {
+                    // User cancelled
+                }
+            });
+            
+            // Delete account button
+            document.getElementById('deleteAccountBtn').addEventListener('click', async function() {
+                try {
+                    // First confirmation modal
+                    await showConfirmModal({
+                        title: 'Delete Account',
+                        message: 'Are you sure you want to delete your account? This action cannot be undone.',
+                        confirmText: 'Yes, Delete',
+                        cancelText: 'Cancel',
+                        danger: true,
+                        onConfirm: async () => {
+                            // Show password prompt modal
+                            try {
+                                await showPromptModal({
+                                    title: 'Confirm Deletion',
+                                    message: 'Please enter your password to confirm account deletion:',
+                                    inputType: 'password',
+                                    placeholder: 'Enter your password',
+                                    confirmText: 'Delete Account',
+                                    cancelText: 'Cancel',
+                                    danger: true,
+                                    required: true,
+                                    onConfirm: async (password) => {
+                                        await performAccountDeletion(password);
+                                    }
+                                });
+                            } catch (error) {
+                                // User cancelled password entry
+                            }
+                        }
+                    });
+                } catch (error) {
+                    // User cancelled first confirmation
+                }
+            });
+            
+            async function performAccountDeletion(password) {
+                if (!password) {
+                    return;
+                }
+                
+                try {
+                    // Get CSRF token
+                    const csrfToken = getCSRFToken();
+                    const headers = {
+                        'Content-Type': 'application/json',
+                    };
+                    
+                    if (csrfToken) {
+                        headers['X-CSRF-Token'] = csrfToken;
+                    }
+                    
+                    const response = await fetch('/dashboard/account', {
+                        method: 'DELETE',
+                        headers: headers,
+                        credentials: 'include',
+                        body: JSON.stringify({ confirmPassword: password })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showSuccessMessage('Account deleted successfully. Redirecting to home page...');
+                        setTimeout(() => {
+                            window.location.href = '/pages/landing.html';
+                        }, 2000);
+                    } else {
+                        throw new Error(result.message || 'Account deletion failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('Account deletion error:', error);
+                    showErrorMessage(error.message || 'Failed to delete account. Please try again.');
+                }
+            }
+            
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', async function() {
+                try {
+                    await showConfirmModal({
+                        title: 'Sign Out',
+                        message: 'Are you sure you want to sign out?',
+                        confirmText: 'Yes, Sign Out',
+                        cancelText: 'Cancel',
+                        danger: false,
+                        onConfirm: async () => {
+                            await performLogout();
+                        }
+                    });
+                } catch (error) {
+                    // User cancelled
+                }
+            });
+            
+            async function performLogout() {
+                try {
+                    // Get CSRF token
+                    const csrfToken = getCSRFToken();
+                    const headers = {
+                        'Content-Type': 'application/json',
+                    };
+                    
+                    if (csrfToken) {
+                        headers['X-CSRF-Token'] = csrfToken;
+                    }
+                    
+                    const response = await fetch('/auth/logout', {
+                        method: 'POST',
+                        headers: headers,
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        localStorage.removeItem('user');
+                        window.location.href = '/pages/login.html';
+                    } else {
+                        throw new Error('Logout failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    showErrorMessage('Failed to sign out. Please try again.');
+                }
+            }
+            
+            // Date of birth formatting
+            document.getElementById('dateOfBirth').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2);
+                }
+                if (value.length >= 5) {
+                    value = value.substring(0, 5) + '/' + value.substring(5, 9);
+                }
+                e.target.value = value;
+            });
+            
+            function showSuccessMessage(message) {
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success-message-large';
+                successDiv.textContent = message;
+                successDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    background: #d4edda;
+                    color: #155724;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    border: 1px solid #c3e6cb;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                `;
+                
+                document.body.appendChild(successDiv);
+                
+                setTimeout(() => {
+                    successDiv.remove();
+                }, 3000);
+            }
+            
+            function showErrorMessage(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message-large';
+                errorDiv.textContent = message;
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    background: #f8d7da;
+                    color: #721c24;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    border: 1px solid #f5c6cb;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                `;
+                
+                document.body.appendChild(errorDiv);
+                
+                setTimeout(() => {
+                    errorDiv.remove();
+                }, 5000);
+            }
+            
+            // Initialize profile page
+            // Initialize CSRF token first, then initialize profile
+            initializeCSRFToken().then(() => {
+                initializeProfile();
+            });
+        });
+    </script>
+</body>
+</html>
