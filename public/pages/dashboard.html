@@ -153,9 +153,14 @@
         /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
             margin-bottom: 2rem;
+        }
+        
+        /* API Key card spans full width (2 columns) */
+        .api-key-card {
+            grid-column: 1 / -1;
         }
         
         /* Cards */
@@ -292,6 +297,12 @@
             gap: 0.5rem;
             margin-top: 1rem;
             flex-wrap: wrap;
+        }
+        
+        /* Remove margin-top when card-actions is inside header */
+        header .card-actions,
+        .header .card-actions {
+            margin-top: 0;
         }
         
         .card-actions .btn {
@@ -471,31 +482,26 @@
             <div id="dashboardContent" style="display: none;">
                 <!-- Dashboard Grid -->
                 <div class="dashboard-grid">
-                    <!-- API Key Card -->
-                    <div class="card api-key-card">
+                    <!-- Account Information -->
+                    <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">API Key</h2>
-                            <div class="card-icon" aria-hidden="true">🔑</div>
+                            <h2 class="card-title">Account Info</h2>
+                            <div class="card-icon" aria-hidden="true">👤</div>
                         </div>
                         
-                        <div class="api-key-display">
-                            <div class="api-key-value" id="apiKeyValue">Loading...</div>
-                            <button class="copy-btn" id="copyApiKeyBtn" aria-label="Copy API key to clipboard">Copy</button>
+                        <div class="stat-item">
+                            <div class="stat-value" id="accountAge">-</div>
+                            <div class="stat-label">Days Active</div>
                         </div>
                         
-                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">
-                            Use this API key to authenticate your requests to our PDF generation service.
-                        </p>
+                        <div class="stat-item" style="margin-top: 1rem;">
+                            <div class="stat-value" id="lastLogin">-</div>
+                            <div class="stat-label">Last Login</div>
+                        </div>
                         
                         <div class="card-actions">
-                            <button class="btn btn-primary" id="generateKeyBtn" aria-label="Generate new API key" style="display: none;">
-                                Generate API Key
-                            </button>
-                            <button class="btn btn-primary" id="regenerateApiKeyBtn" aria-label="Regenerate API key" style="display: none;">
-                                Regenerate Key
-                            </button>
-                            <a href="/pages/html2pdf-test-ui.html" class="btn btn-secondary" id="pdfGeneratorBtn" aria-label="Open PDF generator with API key">
-                                Open PDF Generator
+                            <a href="/pages/profile.html" class="btn btn-secondary" aria-label="Edit profile information">
+                                Edit Profile
                             </a>
                         </div>
                     </div>
@@ -524,26 +530,31 @@
                         </div>
                     </div>
                     
-                    <!-- Account Information -->
-                    <div class="card">
+                    <!-- API Key Card - Full Width -->
+                    <div class="card api-key-card">
                         <div class="card-header">
-                            <h2 class="card-title">Account Info</h2>
-                            <div class="card-icon" aria-hidden="true">👤</div>
+                            <h2 class="card-title">API Key</h2>
+                            <div class="card-icon" aria-hidden="true">🔑</div>
                         </div>
                         
-                        <div class="stat-item">
-                            <div class="stat-value" id="accountAge">-</div>
-                            <div class="stat-label">Days Active</div>
+                        <div class="api-key-display">
+                            <div class="api-key-value" id="apiKeyValue">Loading...</div>
+                            <button class="copy-btn" id="copyApiKeyBtn" aria-label="Copy API key to clipboard">Copy</button>
                         </div>
                         
-                        <div class="stat-item" style="margin-top: 1rem;">
-                            <div class="stat-value" id="lastLogin">-</div>
-                            <div class="stat-label">Last Login</div>
-                        </div>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">
+                            Use this API key to authenticate your requests to our PDF generation service.
+                        </p>
                         
                         <div class="card-actions">
-                            <a href="/pages/profile.html" class="btn btn-secondary" aria-label="Edit profile information">
-                                Edit Profile
+                            <button class="btn btn-primary" id="generateKeyBtn" aria-label="Generate new API key" style="display: none;">
+                                Generate API Key
+                            </button>
+                            <button class="btn btn-primary" id="regenerateApiKeyBtn" aria-label="Regenerate API key" style="display: none;">
+                                Regenerate Key
+                            </button>
+                            <a href="/pages/html2pdf-test-ui.html" class="btn btn-secondary" id="pdfGeneratorBtn" aria-label="Open PDF generator with API key">
+                                Open PDF Generator
                             </a>
                         </div>
                     </div>
