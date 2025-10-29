@@ -11,6 +11,9 @@ const {
 } = require("../utils/buildHtmlFromPdfDocumentBundle");
 const { sendEmail } = require("../utils/email");
 
+// API KEY AUTHENTICATION - Added for authentication system
+const { apiKeyAuth } = require("../middleware/apiKeyAuth");
+
 const router = express.Router();
 
 // --- small helpers ---
@@ -72,8 +75,9 @@ async function writeLogFile({ ok, details }) {
 /**
  * POST /convert
  * Simple endpoint that accepts either HTML content or pdfDocumentBundle
+ * API KEY AUTHENTICATION - Added for authentication system
  */
-router.post("/convert", async (req, res) => {
+router.post("/convert", apiKeyAuth, async (req, res) => {
   let browser;
   let ok = false;
   let logDetails = "";
