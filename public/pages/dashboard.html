@@ -6,6 +6,10 @@
     <title>Dashboard - PDF Service</title>
     <meta name="description" content="Manage your PDF Service account, view usage statistics, and access your API key.">
     <meta name="csrf-token" content="">
+    <!-- Prevent caching of authenticated pages -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -642,11 +646,61 @@
             const dashboardContent = document.getElementById('dashboardContent');
             const errorMessage = document.getElementById('errorMessage');
             
+            // Function to check authentication and redirect if needed
+            async function checkAuthAndRedirect() {
+                try {
+                    const response = await fetch('/auth/session', {
+                        credentials: 'include',
+                        cache: 'no-store' // Prevent caching
+                    });
+                    
+                    // Check response status - 401 means not authenticated
+                    if (response.status === 401 || response.status === 403) {
+                        console.log('Authentication required (status ' + response.status + ')');
+                        throw new Error('Not authenticated');
+                    }
+                    
+                    // If response is not OK, user is not authenticated
+                    if (!response.ok) {
+                        console.log('Session check failed (status ' + response.status + ')');
+                        throw new Error('Not authenticated');
+                    }
+                    
+                    // Parse response
+                    const result = await response.json();
+                    
+                    // If result is not successful, user is not authenticated
+                    if (!result || result.success !== true) {
+                        console.log('Session invalid:', result?.message || 'Unknown error');
+                        throw new Error('Session invalid');
+                    }
+                    
+                    console.log('User is authenticated');
+                    return true; // Authenticated
+                } catch (error) {
+                    console.error('Authentication check failed:', error);
+                    console.log('Redirecting to login page...');
+                    
+                    // Clear any cached data
+                    try {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                    } catch (e) {
+                        console.error('Error clearing storage:', e);
+                    }
+                    
+                    // Redirect to login immediately - no delay
+                    window.location.replace('/pages/login.html');
+                    return false; // Not authenticated
+                }
+            }
+            
             // Initialize CSRF token
             async function initializeCSRFToken() {
                 try {
                     const response = await fetch('/auth/session', {
-                        credentials: 'include'
+                        credentials: 'include',
+                        cache: 'no-store'
                     });
                     
                     if (response.ok) {
@@ -666,21 +720,13 @@
             
             // Check authentication and load dashboard
             async function initializeDashboard() {
+                // First check authentication
+                const isAuthenticated = await checkAuthAndRedirect();
+                if (!isAuthenticated) {
+                    return; // Already redirected
+                }
+                
                 try {
-                    // Check if user is logged in
-                    const response = await fetch('/auth/session', {
-                        credentials: 'include'
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Not authenticated');
-                    }
-                    
-                    const result = await response.json();
-                    if (!result.success) {
-                        throw new Error('Session invalid');
-                    }
-                    
                     // Load dashboard data
                     await loadDashboardData();
                     
@@ -690,13 +736,40 @@
                     
                 } catch (error) {
                     console.error('Dashboard initialization error:', error);
-                    showError('Authentication required. Redirecting to login...');
-                    
-                    setTimeout(() => {
-                        window.location.href = '/pages/login.html';
-                    }, 2000);
+                    // Clear any cached data before redirect
+                    try {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                    } catch (e) {
+                        console.error('Error clearing storage:', e);
+                    }
+                    // Redirect immediately - no delay
+                    window.location.replace('/pages/login.html');
                 }
             }
+            
+            // Handle page visibility change (when user comes back via back button)
+            document.addEventListener('visibilitychange', async function() {
+                if (!document.hidden) {
+                    // Page became visible - check if still authenticated
+                    const isAuthenticated = await checkAuthAndRedirect();
+                    if (!isAuthenticated) {
+                        return; // Already redirected
+                    }
+                }
+            });
+            
+            // Handle pageshow event (fires when page is loaded from cache, including back button)
+            window.addEventListener('pageshow', async function(event) {
+                // If page was loaded from cache (back/forward button)
+                if (event.persisted) {
+                    console.log('Page loaded from cache - verifying authentication');
+                    const isAuthenticated = await checkAuthAndRedirect();
+                    if (!isAuthenticated) {
+                        return; // Already redirected
+                    }
+                }
+            });
             
             async function loadDashboardData() {
                 try {

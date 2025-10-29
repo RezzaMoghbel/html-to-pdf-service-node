@@ -6,6 +6,10 @@
     <title>Profile Settings - PDF Service</title>
     <meta name="description" content="Manage your PDF Service profile settings and account information.">
     <meta name="csrf-token" content="">
+    <!-- Prevent caching of authenticated pages -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -1037,27 +1041,69 @@
                 return metaTag ? metaTag.getAttribute('content') : null;
             }
             
+            // Function to check authentication and redirect if needed
+            async function checkAuthAndRedirect() {
+                try {
+                    const response = await fetch('/auth/session', {
+                        credentials: 'include',
+                        cache: 'no-store' // Prevent caching
+                    });
+                    
+                    // Check response status - 401 means not authenticated
+                    if (response.status === 401 || response.status === 403) {
+                        console.log('Authentication required (status ' + response.status + ')');
+                        throw new Error('Not authenticated');
+                    }
+                    
+                    // If response is not OK, user is not authenticated
+                    if (!response.ok) {
+                        console.log('Session check failed (status ' + response.status + ')');
+                        throw new Error('Not authenticated');
+                    }
+                    
+                    // Parse response
+                    const result = await response.json();
+                    
+                    // If result is not successful, user is not authenticated
+                    if (!result || result.success !== true) {
+                        console.log('Session invalid:', result?.message || 'Unknown error');
+                        throw new Error('Session invalid');
+                    }
+                    
+                    console.log('User is authenticated');
+                    return true; // Authenticated
+                } catch (error) {
+                    console.error('Authentication check failed:', error);
+                    console.log('Redirecting to login page...');
+                    
+                    // Clear any cached data
+                    try {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                    } catch (e) {
+                        console.error('Error clearing storage:', e);
+                    }
+                    
+                    // Redirect to login immediately - no delay
+                    window.location.replace('/pages/login.html');
+                    return false; // Not authenticated
+                }
+            }
+            
             // Check authentication and load profile
             async function initializeProfile() {
                 // Clear password fields to ensure they're empty on load
                 document.getElementById('currentPassword').value = '';
                 document.getElementById('newPassword').value = '';
                 document.getElementById('confirmNewPassword').value = '';
+                
+                // First check authentication
+                const isAuthenticated = await checkAuthAndRedirect();
+                if (!isAuthenticated) {
+                    return; // Already redirected
+                }
+                
                 try {
-                    // Check if user is logged in
-                    const response = await fetch('/auth/session', {
-                        credentials: 'include'
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Not authenticated');
-                    }
-                    
-                    const result = await response.json();
-                    if (!result.success) {
-                        throw new Error('Session invalid');
-                    }
-                    
                     // Load profile data
                     await loadProfileData();
                     
@@ -1067,13 +1113,40 @@
                     
                 } catch (error) {
                     console.error('Profile initialization error:', error);
-                    showError('Authentication required. Redirecting to login...');
-                    
-                    setTimeout(() => {
-                        window.location.href = '/pages/login.html';
-                    }, 2000);
+                    // Clear any cached data before redirect
+                    try {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                    } catch (e) {
+                        console.error('Error clearing storage:', e);
+                    }
+                    // Redirect immediately - no delay
+                    window.location.replace('/pages/login.html');
                 }
             }
+            
+            // Handle page visibility change (when user comes back via back button)
+            document.addEventListener('visibilitychange', async function() {
+                if (!document.hidden) {
+                    // Page became visible - check if still authenticated
+                    const isAuthenticated = await checkAuthAndRedirect();
+                    if (!isAuthenticated) {
+                        return; // Already redirected
+                    }
+                }
+            });
+            
+            // Handle pageshow event (fires when page is loaded from cache, including back button)
+            window.addEventListener('pageshow', async function(event) {
+                // If page was loaded from cache (back/forward button)
+                if (event.persisted) {
+                    console.log('Page loaded from cache - verifying authentication');
+                    const isAuthenticated = await checkAuthAndRedirect();
+                    if (!isAuthenticated) {
+                        return; // Already redirected
+                    }
+                }
+            });
             
             async function loadProfileData() {
                 try {
@@ -1765,6 +1838,26 @@
             });
             
             async function performLogout() {
+                // Clear ALL localStorage items - comprehensive cleanup
+                try {
+                    localStorage.clear();
+                } catch (error) {
+                    console.error('Error clearing localStorage:', error);
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('apiKey');
+                    localStorage.removeItem('sessionToken');
+                }
+                
+                // Clear sessionStorage as well
+                try {
+                    sessionStorage.clear();
+                } catch (error) {
+                    console.error('Error clearing sessionStorage:', error);
+                }
+                
+                // Set a flag to prevent auto-login
+                sessionStorage.setItem('logoutInProgress', 'true');
+                
                 try {
                     // Get CSRF token
                     const csrfToken = getCSRFToken();
@@ -1776,23 +1869,17 @@
                         headers['X-CSRF-Token'] = csrfToken;
                     }
                     
-                    const response = await fetch('/auth/logout', {
+                    await fetch('/auth/logout', {
                         method: 'POST',
                         headers: headers,
                         credentials: 'include'
                     });
-                    
-                    if (response.ok) {
-                        localStorage.removeItem('user');
-                        window.location.href = '/pages/login.html';
-                    } else {
-                        throw new Error('Logout failed');
-                    }
-                    
                 } catch (error) {
-                    console.error('Logout error:', error);
-                    showErrorMessage('Failed to sign out. Please try again.');
+                    console.error('Logout API error:', error);
                 }
+                
+                // Redirect immediately regardless of API response with logout parameter
+                window.location.replace('/pages/login.html?logout=true&timestamp=' + Date.now());
             }
             
             // Date of birth formatting
