@@ -9,6 +9,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
+    
     <!-- CSS Reset and Base Styles -->
     <style>
         /* CSS Reset */
@@ -308,7 +309,7 @@
                 <p>Sign in to your account to continue</p>
             </div>
             
-            <form id="loginForm" novalidate aria-label="User login form">
+            <form id="loginForm" method="post" novalidate aria-label="User login form" onsubmit="return false;">
                 <!-- Email Field -->
                 <div class="form-group">
                     <label for="email">Email Address</label>
@@ -366,28 +367,84 @@
     <script src="/js/validation.js"></script>
     <script src="/js/auth.js"></script>
     <script>
-        // Initialize login form
-        document.addEventListener('DOMContentLoaded', function() {
+        
+        // Initialize login form - ensure this runs every time page loads
+        function initializeLoginForm() {
             const form = document.getElementById('loginForm');
+            if (!form) {
+                console.error('Login form not found!');
+                return;
+            }
+            
             const submitBtn = document.getElementById('submitBtn');
+            if (!submitBtn) {
+                console.error('Submit button not found!');
+                return;
+            }
+            
             const loadingSpinner = submitBtn.querySelector('.loading-spinner');
             const btnText = submitBtn.querySelector('.btn-text');
             
-            // Check if user is already logged in
-            checkExistingSession();
+            console.log('Initializing login form handlers...');
             
-            // Form submission
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
+            // Check if we just logged out - if so, skip session check for a longer period
+            const justLoggedOut = sessionStorage.getItem('justLoggedOut');
+            if (justLoggedOut) {
+                const logoutTime = parseInt(justLoggedOut);
+                const timeSinceLogout = Date.now() - logoutTime;
+                
+                // If logout was within last 30 seconds, skip session check completely
+                if (timeSinceLogout < 30000) {
+                    console.log('Just logged out ' + Math.round(timeSinceLogout / 1000) + 's ago - skipping session check');
+                    // Clear the flag after a delay
+                    setTimeout(() => {
+                        sessionStorage.removeItem('justLoggedOut');
+                    }, 30000 - timeSinceLogout);
+                    // Don't return - still need to setup form handler
+                } else {
+                    // Logout was more than 30 seconds ago, safe to check
+                    sessionStorage.removeItem('justLoggedOut');
+                    checkExistingSession();
+                }
+            } else {
+                // No logout flag, safe to check session
+                checkExistingSession();
+            }
+            
+            
+            // Form submission handler - MUST prevent default FIRST
+            // Remove any existing listeners first to prevent duplicates
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            const freshForm = document.getElementById('loginForm');
+            const freshSubmitBtn = document.getElementById('submitBtn');
+            const freshLoadingSpinner = freshSubmitBtn.querySelector('.loading-spinner');
+            const freshBtnText = freshSubmitBtn.querySelector('.btn-text');
+            
+            freshForm.addEventListener('submit', async function(e) {
+                    // CRITICAL: Prevent default FIRST before anything else
+                    e.preventDefault();
+                    e.stopPropagation();
+                
+                // Debug: Log that handler is running
+                console.log('=== LOGIN FORM SUBMIT HANDLER TRIGGERED ===');
+                
+                // Clear logout flag when user attempts to login
+                sessionStorage.removeItem('justLoggedOut');
+                sessionStorage.removeItem('loginSuccess');
+                
+                console.log('Login form submitted via JavaScript handler');
+                console.log('Form action:', freshForm.action);
+                console.log('Form method:', freshForm.method);
                 
                 // Show loading state
-                submitBtn.disabled = true;
-                loadingSpinner.style.display = 'inline-block';
-                btnText.textContent = 'Signing In...';
+                freshSubmitBtn.disabled = true;
+                if (freshLoadingSpinner) freshLoadingSpinner.style.display = 'inline-block';
+                if (freshBtnText) freshBtnText.textContent = 'Signing In...';
                 
                 try {
                     // Get form data
-                    const formData = new FormData(form);
+                    const formData = new FormData(freshForm);
                     const loginData = {
                         email: formData.get('email').trim(),
                         password: formData.get('password'),
@@ -400,44 +457,143 @@
                     }
                     
                     // Submit login
-                    const response = await fetch('/auth/login', {
+                    console.log('Sending login request to /auth/login', loginData.email); // Debug log
+                    
+                    // Ensure we're using absolute URL or correct path
+                    const loginUrl = '/auth/login';
+                    console.log('Login URL:', loginUrl);
+                    
+                    const response = await fetch(loginUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(loginData),
-                        credentials: 'include' // Include cookies for session
+                        credentials: 'include', // Include cookies for session
+                        cache: 'no-store' // Prevent caching
                     });
+                    
+                    console.log('Login response status:', response.status, response.statusText, 'URL:', response.url); // Debug log
+                    
+                    // Check for 404 specifically
+                    if (response.status === 404) {
+                        console.error('404 Error: /auth/login endpoint not found');
+                        console.error('Response URL:', response.url);
+                        throw new Error('Login endpoint not found. Please contact support.');
+                    }
+                    
+                    // Check if response is ok before parsing JSON
+                    if (!response.ok) {
+                        // Try to get error message from response
+                        let errorMessage = 'Login failed. Please check your credentials.';
+                        try {
+                            const errorResult = await response.json();
+                            errorMessage = errorResult.message || errorResult.error || errorMessage;
+                        } catch (e) {
+                            errorMessage = `Login failed with status ${response.status}`;
+                        }
+                        throw new Error(errorMessage);
+                    }
                     
                     const result = await response.json();
                     
+                    console.log('Login result:', result); // Debug log
+                    
                     if (result.success) {
-                        // Show success message
-                        showSuccessMessage('Login successful! Redirecting to dashboard...');
-                        
                         // Store user data in localStorage for quick access
-                        localStorage.setItem('user', JSON.stringify(result.data.user));
+                        // Only store safe user data (exclude sensitive info)
+                        if (result.data && result.data.user) {
+                            // Create a clean user object without sensitive data
+                            const safeUserData = {
+                                _id: result.data.user._id,
+                                email: result.data.user.email,
+                                profile: result.data.user.profile,
+                                apiKey: result.data.user.apiKey ? {
+                                    key: result.data.user.apiKey.key,
+                                    createdAt: result.data.user.apiKey.createdAt
+                                } : null,
+                                timestamps: result.data.user.timestamps
+                            };
+                            localStorage.setItem('user', JSON.stringify(safeUserData));
+                            
+                            // Store API key separately if available
+                            if (result.data.user.apiKey && result.data.user.apiKey.key) {
+                                localStorage.setItem('apiKey', result.data.user.apiKey.key);
+                            }
+                        }
                         
-                        // Redirect to dashboard after delay
+                        // Store login success flag
+                        sessionStorage.setItem('loginSuccess', 'true');
+                        sessionStorage.removeItem('justLoggedOut'); // Clear logout flag
+                        
+                        console.log('Login successful, redirecting to dashboard...');
+                        
+                        // Show success message briefly
+                        showSuccessMessage('Login successful! Redirecting...');
+                        
+                        // Wait a moment to ensure session cookie is set, then redirect
                         setTimeout(() => {
+                            console.log('Redirecting to: /pages/dashboard.html');
+                            // Use href instead of replace to allow back navigation
                             window.location.href = '/pages/dashboard.html';
-                        }, 1500);
+                        }, 500);
+                        
+                        // Prevent any further code execution
+                        return false;
                     } else {
                         throw new Error(result.message || 'Login failed');
                     }
                     
                 } catch (error) {
                     console.error('Login error:', error);
+                    console.error('Error details:', {
+                        message: error.message,
+                        stack: error.stack,
+                        name: error.name
+                    });
                     showErrorMessage(error.message || 'An error occurred during login. Please try again.');
                 } finally {
                     // Reset button state
-                    submitBtn.disabled = false;
-                    loadingSpinner.style.display = 'none';
-                    btnText.textContent = 'Sign In';
+                    freshSubmitBtn.disabled = false;
+                    if (freshLoadingSpinner) freshLoadingSpinner.style.display = 'none';
+                    if (freshBtnText) freshBtnText.textContent = 'Sign In';
                 }
             });
             
-            // Real-time validation
+            // Ensure form can NEVER submit normally
+            freshForm.setAttribute('action', 'javascript:void(0);');
+            freshForm.setAttribute('method', 'post');
+            
+            console.log('Login form initialization complete');
+            console.log('Form action:', freshForm.action);
+            console.log('Form method:', freshForm.method);
+            
+            // Setup real-time validation
+            setupRealTimeValidation();
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeLoginForm);
+        } else {
+            // DOM already loaded
+            initializeLoginForm();
+        }
+        
+        // Also re-initialize on pageshow (for back button navigation)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache (back button)
+                console.log('Page loaded from cache, re-initializing login form');
+                initializeLoginForm();
+            }
+        });
+        
+        // Real-time validation function
+        function setupRealTimeValidation() {
+            const form = document.getElementById('loginForm');
+            if (!form) return;
+            
             const inputs = form.querySelectorAll('input');
             inputs.forEach(input => {
                 input.addEventListener('blur', function() {
@@ -494,6 +650,9 @@
             }
             
             function showSuccessMessage(message) {
+                const form = document.getElementById('loginForm');
+                if (!form) return;
+                
                 const successDiv = document.createElement('div');
                 successDiv.className = 'success-message show';
                 successDiv.textContent = message;
@@ -514,6 +673,9 @@
             }
             
             function showErrorMessage(message) {
+                const form = document.getElementById('loginForm');
+                if (!form) return;
+                
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'error-message show';
                 errorDiv.textContent = message;
@@ -535,36 +697,64 @@
             
             async function checkExistingSession() {
                 try {
+                    // Check if user has a valid session
                     const response = await fetch('/auth/session', {
-                        credentials: 'include'
+                        credentials: 'include',
+                        cache: 'no-store' // Never use cached response
                     });
                     
-                    if (response.ok) {
-                        const result = await response.json();
-                        if (result.success) {
-                            // User is already logged in, redirect to dashboard
-                            showSuccessMessage('Already logged in! Redirecting to dashboard...');
-                            setTimeout(() => {
-                                window.location.href = '/pages/dashboard.html';
-                            }, 1000);
-                        }
+                    // If 401 or 403, user is not authenticated - show login form
+                    if (response.status === 401 || response.status === 403) {
+                        console.log('User not authenticated (status ' + response.status + ')');
+                        return; // Show login form
                     }
+                    
+                    // If response is not OK, user is not authenticated
+                    if (!response.ok) {
+                        console.log('Session check failed (status ' + response.status + ')');
+                        return; // Show login form
+                    }
+                    
+                    // Parse response
+                    const result = await response.json();
+                    
+                    // Check if result is successful - if not, show login form
+                    if (!result || result.success !== true) {
+                        console.log('Session invalid:', result?.message || 'Unknown error');
+                        return; // Show login form
+                    }
+                    
+                    // Only redirect if we have a valid, authenticated session
+                    console.log('Valid session found, redirecting to dashboard');
+                    showSuccessMessage('Already logged in! Redirecting to dashboard...');
+                    setTimeout(() => {
+                        window.location.href = '/pages/dashboard.html';
+                    }, 1000);
                 } catch (error) {
-                    // Session check failed, user needs to login
-                    console.log('No existing session found');
+                    // Session check failed or user not authenticated - show login form
+                    console.log('User not authenticated, showing login form:', error);
                 }
             }
             
-            // Handle Enter key on password field
-            document.getElementById('password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    form.dispatchEvent(new Event('submit'));
-                }
-            });
+            // Setup Enter key handler and focus (inside initializeLoginForm scope)
+            const passwordField = document.getElementById('password');
+            if (passwordField) {
+                passwordField.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const form = document.getElementById('loginForm');
+                        if (form) {
+                            form.dispatchEvent(new Event('submit'));
+                        }
+                    }
+                });
+            }
             
             // Auto-focus email field
-            document.getElementById('email').focus();
-        });
+            const emailField = document.getElementById('email');
+            if (emailField) {
+                emailField.focus();
+            }
+        } // End of initializeLoginForm function
     </script>
 </body>
 </html>
